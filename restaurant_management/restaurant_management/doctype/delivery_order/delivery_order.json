@@ -1,0 +1,71 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-12-25 11:48:04.696615",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "restaurant_order",
+  "delivery_partner",
+  "address",
+  "status",
+  "delivered_on"
+ ],
+ "fields": [
+  {
+   "fieldname": "restaurant_order",
+   "fieldtype": "Link",
+   "label": "Restaurant Order",
+   "options": "Restaurant Order"
+  },
+  {
+   "fieldname": "delivery_partner",
+   "fieldtype": "Data",
+   "label": "Delivery Partner"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Link",
+   "label": "Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nAssigned\nDelivered"
+  },
+  {
+   "fieldname": "delivered_on",
+   "fieldtype": "Datetime",
+   "label": "Delivered On"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-25 11:50:02.506275",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "Delivery Order",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

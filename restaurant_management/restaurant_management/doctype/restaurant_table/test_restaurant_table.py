@@ -1,0 +1,9 @@
+# Copyright (c) 2025, Dhruvi Soliya and Contributors
+# See license.txt
+
+# import frappe
+from frappe.tests.utils import FrappeTestCase
+
+
+class TestRestaurantTable(FrappeTestCase):
+	pass

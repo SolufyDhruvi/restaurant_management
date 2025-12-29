@@ -1,0 +1,31 @@
+{
+ "POS Invoice": [
+  {
+   "dt": "POS Invoice",
+   "fieldname": "custom_order_type",
+   "fieldtype": "Select",
+   "insert_after": "custom_restaurant_table",
+   "label": "Order Type",
+   "module": "Restaurant Management",
+   "options": "\nDine-In\nTakeaway\nDelivery\n"
+  },
+  {
+   "dt": "POS Invoice",
+   "fieldname": "custom_restaurant_table",
+   "fieldtype": "Link",
+   "insert_after": "custom_restaurant_order",
+   "label": "Restaurant Table",
+   "module": "Restaurant Management",
+   "options": "Restaurant Table"
+  },
+  {
+   "dt": "POS Invoice",
+   "fieldname": "custom_restaurant_order",
+   "fieldtype": "Link",
+   "insert_after": "return_against",
+   "label": "Restaurant Order",
+   "module": "Restaurant Management",
+   "options": "Restaurant Order"
+  }
+ ]
+}

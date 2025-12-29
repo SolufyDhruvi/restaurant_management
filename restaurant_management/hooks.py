@@ -7,6 +7,7 @@ app_license = "mit"
 
 # Apps
 # ------------------
+after_migrate = "restaurant_management.migrate.after_migrate"
 
 # required_apps = []
 
@@ -148,23 +149,28 @@ app_license = "mit"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"restaurant_management.tasks.all"
-# 	],
-# 	"daily": [
-# 		"restaurant_management.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"restaurant_management.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"restaurant_management.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"restaurant_management.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+    "cron": {
+        "* * * * *": [
+            "restaurant_management.restaurant_management.doctype.restaurant_table.restaurant_table.auto_free_tables"
+        ]
+    }
+	# "all": [
+	# 	"restaurant_management.tasks.all"
+	# ],
+	# "daily": [
+	# 	"restaurant_management.tasks.daily"
+	# ],
+	# "hourly": [
+	# 	"restaurant_management.tasks.hourly"
+	# ],
+	# "weekly": [
+	# 	"restaurant_management.tasks.weekly"
+	# ],
+	# "monthly": [
+	# 	"restaurant_management.tasks.monthly"
+	# ],
+}
 
 # Testing
 # -------

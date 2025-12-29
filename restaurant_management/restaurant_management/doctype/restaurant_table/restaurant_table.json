@@ -1,0 +1,94 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:table_number",
+ "creation": "2025-12-29 15:49:33.425041",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "table_number",
+  "restaurant_branch",
+  "seating_capacity",
+  "status",
+  "current_order",
+  "floor",
+  "cleaning_start_time",
+  "is_active"
+ ],
+ "fields": [
+  {
+   "fieldname": "table_number",
+   "fieldtype": "Data",
+   "label": "Table Number",
+   "unique": 1
+  },
+  {
+   "fieldname": "restaurant_branch",
+   "fieldtype": "Link",
+   "label": "Restaurant Branch",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "seating_capacity",
+   "fieldtype": "Int",
+   "label": "Seating Capacity"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nFree\nReserved\nOccupied\nCleaning"
+  },
+  {
+   "fieldname": "current_order",
+   "fieldtype": "Link",
+   "label": "Current Order",
+   "options": "Restaurant Order"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "floor",
+   "fieldtype": "Link",
+   "label": "Floor",
+   "options": "Restaurant Floor"
+  },
+  {
+   "fieldname": "cleaning_start_time",
+   "fieldtype": "Time",
+   "label": "Cleaning Start Time"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-29 17:41:53.113496",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "Restaurant Table",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

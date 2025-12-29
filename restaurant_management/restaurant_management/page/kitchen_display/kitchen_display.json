@@ -1,0 +1,23 @@
+{
+ "content": null,
+ "creation": "2025-12-26 15:58:25.256352",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2025-12-26 15:58:25.256352",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "kitchen_display",
+ "owner": "Administrator",
+ "page_name": "kitchen_display",
+ "roles": [
+  {
+   "role": "Chef"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Kitchen Display"
+}
