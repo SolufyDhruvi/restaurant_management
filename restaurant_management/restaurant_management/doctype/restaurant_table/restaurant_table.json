@@ -7,10 +7,14 @@
  "engine": "InnoDB",
  "field_order": [
   "table_number",
+  "company",
   "restaurant_branch",
   "seating_capacity",
   "status",
   "current_order",
+  "column_break_wkdi",
+  "current_reservation",
+  "reservation_datetime",
   "floor",
   "cleaning_start_time",
   "is_active"
@@ -25,23 +29,27 @@
   {
    "fieldname": "restaurant_branch",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Restaurant Branch",
    "options": "Branch"
   },
   {
    "fieldname": "seating_capacity",
    "fieldtype": "Int",
+   "in_list_view": 1,
    "label": "Seating Capacity"
   },
   {
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Status",
    "options": "\nFree\nReserved\nOccupied\nCleaning"
   },
   {
    "fieldname": "current_order",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Current Order",
    "options": "Restaurant Order"
   },
@@ -54,6 +62,7 @@
   {
    "fieldname": "floor",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Floor",
    "options": "Restaurant Floor"
   },
@@ -61,12 +70,35 @@
    "fieldname": "cleaning_start_time",
    "fieldtype": "Time",
    "label": "Cleaning Start Time"
+  },
+  {
+   "fieldname": "current_reservation",
+   "fieldtype": "Link",
+   "label": "Current Reservation",
+   "options": "Reservation"
+  },
+  {
+   "depends_on": "eval: doc.current_reservation",
+   "fetch_from": "current_reservation.datetime",
+   "fieldname": "reservation_datetime",
+   "fieldtype": "Datetime",
+   "label": "Reservation Datetime"
+  },
+  {
+   "fieldname": "column_break_wkdi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-12-29 17:41:53.113496",
+ "modified": "2026-01-02 14:04:36.990081",
  "modified_by": "Administrator",
  "module": "Restaurant Management",
  "name": "Restaurant Table",

@@ -6,39 +6,47 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "reservation_details_tab",
   "naming_series",
+  "company",
+  "restaurant_branch",
   "customer",
-  "restaurant_table",
+  "contact",
+  "column_break_azgg",
+  "guest_no",
+  "additional_request",
   "datetime",
-  "guest",
-  "contact"
+  "table_allocation_tab",
+  "table_info_section",
+  "table_info",
+  "restaurant_order",
+  "financial_info_tab",
+  "advance_deposite_invoice",
+  "cancellation_tab",
+  "cancel_required",
+  "cancellation_reason",
+  "cancellation_date",
+  "cancellation_charge",
+  "cancellation_invoice"
  ],
  "fields": [
   {
    "fieldname": "customer",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Customer",
    "options": "Customer"
   },
   {
-   "fieldname": "restaurant_table",
-   "fieldtype": "Link",
-   "label": "Restaurant Table",
-   "options": "Restaurant Table"
-  },
-  {
    "fieldname": "datetime",
    "fieldtype": "Datetime",
+   "in_list_view": 1,
    "label": "Datetime"
-  },
-  {
-   "fieldname": "guest",
-   "fieldtype": "Int",
-   "label": "Guest"
   },
   {
    "fieldname": "contact",
    "fieldtype": "Phone",
+   "in_list_view": 1,
    "label": "Contact"
   },
   {
@@ -46,12 +54,114 @@
    "fieldtype": "Select",
    "label": "Naming Series",
    "options": "\nRV.-"
+  },
+  {
+   "fieldname": "guest_no",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Guest No."
+  },
+  {
+   "fieldname": "cancellation_tab",
+   "fieldtype": "Tab Break",
+   "label": "Cancellation"
+  },
+  {
+   "default": "0",
+   "fieldname": "cancel_required",
+   "fieldtype": "Check",
+   "label": "Cancel Required"
+  },
+  {
+   "depends_on": "eval: doc.cancel_required",
+   "fieldname": "cancellation_reason",
+   "fieldtype": "Small Text",
+   "label": "Cancellation Reason"
+  },
+  {
+   "depends_on": "eval: doc.cancel_required",
+   "fieldname": "cancellation_date",
+   "fieldtype": "Date",
+   "label": "Cancellation Date"
+  },
+  {
+   "depends_on": "eval: doc.cancel_required",
+   "fieldname": "cancellation_charge",
+   "fieldtype": "Currency",
+   "label": "Cancellation Charge"
+  },
+  {
+   "depends_on": "eval: doc.cancel_required",
+   "fieldname": "cancellation_invoice",
+   "fieldtype": "Link",
+   "label": "Cancellation invoice",
+   "options": "Sales Invoice"
+  },
+  {
+   "fieldname": "reservation_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Reservation Details"
+  },
+  {
+   "fieldname": "financial_info_tab",
+   "fieldtype": "Tab Break",
+   "label": "Advance Deposite Info"
+  },
+  {
+   "fieldname": "advance_deposite_invoice",
+   "fieldtype": "Link",
+   "label": "Advance Deposite invoice",
+   "options": "Sales Invoice"
+  },
+  {
+   "fieldname": "additional_request",
+   "fieldtype": "Small Text",
+   "label": "Additional Request"
+  },
+  {
+   "fieldname": "restaurant_order",
+   "fieldtype": "Link",
+   "label": "Restaurant Order",
+   "options": "Restaurant Order"
+  },
+  {
+   "fieldname": "table_info",
+   "fieldtype": "Table",
+   "label": "Table Info",
+   "options": "Table Details"
+  },
+  {
+   "fieldname": "table_allocation_tab",
+   "fieldtype": "Tab Break",
+   "label": "Table Allocation"
+  },
+  {
+   "fieldname": "table_info_section",
+   "fieldtype": "Section Break",
+   "label": "Table Info"
+  },
+  {
+   "fieldname": "column_break_azgg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "restaurant_branch",
+   "fieldtype": "Link",
+   "label": "Restaurant Branch",
+   "link_filters": "[]",
+   "options": "Branch"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-12-29 10:05:16.303243",
+ "modified": "2026-01-05 10:01:07.815721",
  "modified_by": "Administrator",
  "module": "Restaurant Management",
  "name": "Reservation",

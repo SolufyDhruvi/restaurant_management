@@ -6,18 +6,24 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "details_section",
   "naming_series",
   "order_type",
   "table",
   "customer",
+  "column_break_wjwi",
   "restaurant_branch",
+  "company",
+  "section_break_unkk",
   "items",
-  "pos_invoice"
+  "section_break_aaul",
+  "sales_invoice"
  ],
  "fields": [
   {
    "fieldname": "order_type",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Order Type",
    "options": "\nDine-In\nTakeaway\nDelivery"
   },
@@ -25,18 +31,21 @@
    "depends_on": "eval: doc.order_type==\"Dine-In\"",
    "fieldname": "table",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Table",
    "options": "Restaurant Table"
   },
   {
    "fieldname": "customer",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Customer",
    "options": "Customer"
   },
   {
    "fieldname": "restaurant_branch",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Restaurant Branch",
    "options": "Branch"
   },
@@ -47,22 +56,49 @@
    "options": "Restaurant Order Item"
   },
   {
-   "fieldname": "pos_invoice",
-   "fieldtype": "Link",
-   "label": "POS Invoice",
-   "options": "POS Invoice"
-  },
-  {
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Naming Series",
    "options": "RO.-"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "depends_on": "eval: doc.workflow_state==\"Billed\"",
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sales Invoice",
+   "options": "Sales Invoice"
+  },
+  {
+   "fieldname": "column_break_wjwi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_unkk",
+   "fieldtype": "Section Break",
+   "label": "Item Details"
+  },
+  {
+   "fieldname": "section_break_aaul",
+   "fieldtype": "Section Break",
+   "label": "Invoice Details"
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-12-26 14:25:52.021324",
+ "modified": "2026-01-02 11:37:57.300176",
  "modified_by": "Administrator",
  "module": "Restaurant Management",
  "name": "Restaurant Order",

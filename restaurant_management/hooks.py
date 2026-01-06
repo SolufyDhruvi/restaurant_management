@@ -138,23 +138,21 @@ after_migrate = "restaurant_management.migrate.after_migrate"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"Sales Invoice": {
+		"on_update": "restaurant_management.restaurant_management.customization.sales_invoice.sales_invoice.fetch_name_sales_invoice",
+	}
+}
 
 # Scheduled Tasks
 # ---------------
 
-scheduler_events = {
-    "cron": {
-        "* * * * *": [
-            "restaurant_management.restaurant_management.doctype.restaurant_table.restaurant_table.auto_free_tables"
-        ]
-    }
+# scheduler_events = {
+#     "cron": {
+#         "* * * * *": [
+#            "restaurant_management.restaurant_management.customization.restaurant_table.restaurant_table.free_cleaned_tables"
+#         ]
+#     }
 	# "all": [
 	# 	"restaurant_management.tasks.all"
 	# ],
@@ -170,7 +168,7 @@ scheduler_events = {
 	# "monthly": [
 	# 	"restaurant_management.tasks.monthly"
 	# ],
-}
+# }
 
 # Testing
 # -------
