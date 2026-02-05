@@ -252,3 +252,41 @@ doc_events = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+fixtures = [
+    {
+	"doctype": "Workflow",
+		"filters": {
+			"name": [ "in", ["Reservation","Restaurant Order","Kitchen Order"] ]
+			}
+		},
+	{
+	"doctype": "Workflow State"
+    },
+    {
+	"doctype": "Workflow Action Master"
+    },
+	{
+		"doctype": "Dashboard",
+		"filters": {
+			"module": ["in", ["Restaurant Management"]]
+		}
+	},
+	{
+	"doctype": "Number Card",
+		"filters": {
+			"module": ["in", ["Restaurant Management"]]
+			}
+	},
+	{
+	"doctype": "Dashboard Chart",
+		"filters": {
+			"module": ["in", ["Restaurant Management"]]
+			}
+	},
+	{
+		"doctype": "Workspace",
+		"filters": {
+			"module": ["in", ["Restaurant Management"]]
+		}
+	}
+]

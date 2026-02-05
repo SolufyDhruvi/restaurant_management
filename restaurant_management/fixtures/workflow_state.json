@@ -1,0 +1,137 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "question-sign",
+  "modified": "2025-12-24 16:32:14.357802",
+  "name": "Pending",
+  "style": "",
+  "workflow_state_name": "Pending"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "ok-sign",
+  "modified": "2025-12-24 16:32:14.360681",
+  "name": "Approved",
+  "style": "Success",
+  "workflow_state_name": "Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "remove",
+  "modified": "2025-12-24 16:32:14.362692",
+  "name": "Rejected",
+  "style": "Danger",
+  "workflow_state_name": "Rejected"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-01-30 11:33:56.191784",
+  "name": "Closed",
+  "style": "",
+  "workflow_state_name": "Closed"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-12-25 10:27:41.976622",
+  "name": "Draft",
+  "style": "",
+  "workflow_state_name": "Draft"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-12-25 10:27:50.964087",
+  "name": "Placed",
+  "style": "",
+  "workflow_state_name": "Placed"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-12-25 10:28:37.360831",
+  "name": "Cancelled",
+  "style": "",
+  "workflow_state_name": "Cancelled"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-12-25 11:38:37.675695",
+  "name": "Checked-In",
+  "style": "",
+  "workflow_state_name": "Checked-In"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-01-02 11:38:44.312985",
+  "name": "Complete",
+  "style": "",
+  "workflow_state_name": "Complete"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-01-29 12:49:16.744176",
+  "name": "Served",
+  "style": "",
+  "workflow_state_name": "Served"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-12-25 11:38:29.527439",
+  "name": "Confirmed",
+  "style": "",
+  "workflow_state_name": "Confirmed"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-12-25 10:28:16.966918",
+  "name": "Billed",
+  "style": "",
+  "workflow_state_name": "Billed"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-12-25 11:38:21.066816",
+  "name": "Requested",
+  "style": "",
+  "workflow_state_name": "Requested"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-12-25 10:28:07.654427",
+  "name": "Ready",
+  "style": "",
+  "workflow_state_name": "Ready"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-12-25 10:27:59.679210",
+  "name": "Cooking",
+  "style": "",
+  "workflow_state_name": "Cooking"
+ }
+]

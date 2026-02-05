@@ -1,0 +1,100 @@
+[
+ {
+  "cards": [],
+  "chart_options": null,
+  "charts": [
+   {
+    "chart": "Top Selling Dishes",
+    "parent": "Restaurant Management",
+    "parentfield": "charts",
+    "parenttype": "Dashboard",
+    "width": "Full"
+   }
+  ],
+  "dashboard_name": "Restaurant Management",
+  "docstatus": 0,
+  "doctype": "Dashboard",
+  "is_default": 0,
+  "is_standard": 1,
+  "modified": "2026-01-07 16:22:33.599664",
+  "module": "Restaurant Management",
+  "name": "Restaurant Management"
+ },
+ {
+  "cards": [
+   {
+    "card": "Total Waiter",
+    "parent": "Info Board",
+    "parentfield": "cards",
+    "parenttype": "Dashboard"
+   },
+   {
+    "card": "Total chefs",
+    "parent": "Info Board",
+    "parentfield": "cards",
+    "parenttype": "Dashboard"
+   },
+   {
+    "card": "Low Stock Items",
+    "parent": "Info Board",
+    "parentfield": "cards",
+    "parenttype": "Dashboard"
+   },
+   {
+    "card": "Vegetables in Stock",
+    "parent": "Info Board",
+    "parentfield": "cards",
+    "parenttype": "Dashboard"
+   },
+   {
+    "card": "Dairy in Stock",
+    "parent": "Info Board",
+    "parentfield": "cards",
+    "parenttype": "Dashboard"
+   },
+   {
+    "card": "Total Main Course Item",
+    "parent": "Info Board",
+    "parentfield": "cards",
+    "parenttype": "Dashboard"
+   },
+   {
+    "card": "Total Starter Item",
+    "parent": "Info Board",
+    "parentfield": "cards",
+    "parenttype": "Dashboard"
+   },
+   {
+    "card": "Total Beverages Item",
+    "parent": "Info Board",
+    "parentfield": "cards",
+    "parenttype": "Dashboard"
+   }
+  ],
+  "chart_options": null,
+  "charts": [
+   {
+    "chart": "Daily Customer Count",
+    "parent": "Info Board",
+    "parentfield": "charts",
+    "parenttype": "Dashboard",
+    "width": "Half"
+   },
+   {
+    "chart": "Daily Sales Invoice Count",
+    "parent": "Info Board",
+    "parentfield": "charts",
+    "parenttype": "Dashboard",
+    "width": "Half"
+   }
+  ],
+  "dashboard_name": "Info Board",
+  "docstatus": 0,
+  "doctype": "Dashboard",
+  "is_default": 0,
+  "is_standard": 1,
+  "modified": "2026-01-20 14:31:40.809993",
+  "module": "Restaurant Management",
+  "name": "Info Board"
+ }
+]

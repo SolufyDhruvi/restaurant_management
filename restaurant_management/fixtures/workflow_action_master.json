@@ -1,0 +1,128 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-24 16:32:14.382327",
+  "name": "Approve",
+  "workflow_action_name": "Approve"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-24 16:32:14.384900",
+  "name": "Reject",
+  "workflow_action_name": "Reject"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-24 16:32:14.386398",
+  "name": "Review",
+  "workflow_action_name": "Review"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-25 10:32:39.151497",
+  "name": "Place Order",
+  "workflow_action_name": "Place Order"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-25 10:33:52.332481",
+  "name": "Send to Kitchen",
+  "workflow_action_name": "Send to Kitchen"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-25 10:34:50.486447",
+  "name": "Mark as Ready",
+  "workflow_action_name": "Mark as Ready"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-25 11:21:51.792948",
+  "name": "Cancel Item",
+  "workflow_action_name": "Cancel Item"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-25 11:39:08.410175",
+  "name": "Confirm Reservation",
+  "workflow_action_name": "Confirm Reservation"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-01-30 11:37:08.084975",
+  "name": "Closed",
+  "workflow_action_name": "Closed"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-25 10:36:11.466175",
+  "name": "Cancel Order",
+  "workflow_action_name": "Cancel Order"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-25 10:37:34.042588",
+  "name": "Cancel (Emergency)",
+  "workflow_action_name": "Cancel (Emergency)"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-25 11:20:43.146743",
+  "name": "Start Cooking",
+  "workflow_action_name": "Start Cooking"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-25 11:40:01.681894",
+  "name": "Check In Guest",
+  "workflow_action_name": "Check In Guest"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-25 11:40:34.131085",
+  "name": "Cancel Reservation",
+  "workflow_action_name": "Cancel Reservation"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-01-02 11:39:09.313217",
+  "name": "Complete",
+  "workflow_action_name": "Complete"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-01-29 12:49:32.622414",
+  "name": "Served",
+  "workflow_action_name": "Served"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-31 12:25:49.351287",
+  "name": "Add More Items",
+  "workflow_action_name": "Add More Items"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2025-12-25 10:35:24.300586",
+  "name": "Generate Bill",
+  "workflow_action_name": "Generate Bill"
+ }
+]
