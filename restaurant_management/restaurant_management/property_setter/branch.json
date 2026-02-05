@@ -1,0 +1,21 @@
+{
+ "Branch": [
+  {
+   "doctype": "Branch",
+   "doctype_or_field": "DocType",
+   "module": "Restaurant Management",
+   "property": "field_order",
+   "property_type": "Data",
+   "value": "[\"branch\", \"custom_company\", \"custom_address\", \"custom_default_warehouse\", \"custom_default_pos_profile\", \"custom_manager\", \"custom_is_active\"]"
+  },
+  {
+   "doctype": "Branch",
+   "doctype_or_field": "DocField",
+   "field_name": "branch",
+   "module": "Restaurant Management",
+   "property": "unique",
+   "property_type": "Check",
+   "value": "1"
+  }
+ ]
+}

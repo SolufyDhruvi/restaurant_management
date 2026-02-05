@@ -1,0 +1,57 @@
+{
+ "Branch": [
+  {
+   "dt": "Branch",
+   "fieldname": "custom_is_active",
+   "fieldtype": "Check",
+   "insert_after": "custom_manager",
+   "label": "Is Active",
+   "module": "Restaurant Management"
+  },
+  {
+   "dt": "Branch",
+   "fieldname": "custom_manager",
+   "fieldtype": "Link",
+   "insert_after": "custom_default_pos_profile",
+   "label": "Manager",
+   "module": "Restaurant Management",
+   "options": "Employee"
+  },
+  {
+   "dt": "Branch",
+   "fieldname": "custom_default_pos_profile",
+   "fieldtype": "Link",
+   "insert_after": "custom_default_warehouse",
+   "label": "Default POS Profile",
+   "module": "Restaurant Management",
+   "options": "POS Profile"
+  },
+  {
+   "dt": "Branch",
+   "fieldname": "custom_default_warehouse",
+   "fieldtype": "Link",
+   "insert_after": "custom_address",
+   "label": "Default Warehouse",
+   "module": "Restaurant Management",
+   "options": "Warehouse"
+  },
+  {
+   "dt": "Branch",
+   "fieldname": "custom_address",
+   "fieldtype": "Link",
+   "insert_after": "custom_company",
+   "label": "Address",
+   "module": "Restaurant Management",
+   "options": "Address"
+  },
+  {
+   "dt": "Branch",
+   "fieldname": "custom_company",
+   "fieldtype": "Link",
+   "insert_after": "branch",
+   "label": "Company",
+   "module": "Restaurant Management",
+   "options": "Company"
+  }
+ ]
+}
