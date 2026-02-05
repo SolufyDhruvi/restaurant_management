@@ -266,12 +266,6 @@ fixtures = [
 	"doctype": "Workflow Action Master"
     },
 	{
-		"doctype": "Dashboard",
-		"filters": {
-			"module": ["in", ["Restaurant Management"]]
-		}
-	},
-	{
 	"doctype": "Number Card",
 		"filters": {
 			"module": ["in", ["Restaurant Management"]]
