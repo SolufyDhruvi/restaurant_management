@@ -3,14 +3,18 @@
  "creation": "2025-12-26 11:45:03.862039",
  "docstatus": 0,
  "doctype": "Page",
- "idx": 0,
- "modified": "2025-12-26 11:55:49.977961",
+ "idx": 2,
+ "modified": "2026-01-21 14:16:46.871369",
  "modified_by": "Administrator",
  "module": "Restaurant Management",
  "name": "restaurant-table-lay",
  "owner": "Administrator",
  "page_name": "restaurant-table-lay",
- "roles": [],
+ "roles": [
+  {
+   "role": "All"
+  }
+ ],
  "script": null,
  "standard": "Yes",
  "style": null,

@@ -1,0 +1,32 @@
+{
+ "attach_print": 0,
+ "channel": "Email",
+ "condition": "doc.workflow_state == \"Confirmed\"",
+ "creation": "2026-01-08 15:53:52.509767",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Reservation",
+ "enabled": 1,
+ "event": "Value Change",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "<p>Dear {{ doc.customer }},</p>\n\n<p>Your table reservation at {{ doc.restaurant_branch }} is confirmed.</p>\n\n<p>Date: {{ frappe.utils.formatdate(doc.datetime) }}\nTime: {{ frappe.utils.format_time(doc.datetime) }}\nGuests: {{ doc.guest_no }}\nTable:\n{% for t in doc.table_info %}\n- {{ t.table }}\n{% endfor %}</p>\n\n<p>We look forward to serving you.</br>\nThank you for choosing us!</p>\n\n<p>{{ doc.restaurant_branch }}</p>\n",
+ "message_type": "Markdown",
+ "modified": "2026-01-08 16:29:16.955517",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "Reservation Confirmed",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_document_field": "email_id"
+  }
+ ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
+ "sender": "Solufy Restaurant",
+ "sender_email": "dhruvi.s.solufy@gmail.com",
+ "subject": "Your Table Reservation {{doc.name}} is Confirmed ",
+ "value_changed": "workflow_state"
+}

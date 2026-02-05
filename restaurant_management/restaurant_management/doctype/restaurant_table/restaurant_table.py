@@ -6,27 +6,9 @@ from frappe.model.document import Document
 from frappe.utils import get_datetime, now_datetime, add_to_date
 
 class RestaurantTable(Document):
-    pass
-	# def on_update(self):
-	# 	if self.current_reservation:
-	# 		rev = frappe.get_doc("Reservation", self.current_reservation)
-	# 		frappe.msgprint(f"{rev.workflow_state}")
-	# 		if rev.workflow_state == "Checked-In":
-	# 			self.status = "Occupied"
-
-
-# @frappe.whitelist()
-# def auto_free_tables():
-# 	tables = frappe.get_all(
-# 		"Restaurant Table",
-# 		filters={"status": "Cleaning"},
-# 		fields=["name", "cleaning_start_time","status"]
-# 	)
-# 	frappe.msgprint(f"{tables}")
-
-# 	for t in tables:
-# 		if t.cleaning_start_time and now_datetime() >= add_to_date(t.cleaning_start_time, minutes=15):
-# 			table_doc = frappe.get_doc("Restaurant Table", t.name)
-# 			table_doc.status = "Free"
-# 			table_doc.cleaning_start_time = None
-# 			table_doc.save(ignore_permissions=True)
+    def before_validate(self):
+        if self.status == "Cleaning":
+            self.current_reservation = None
+            self.current_order = None
+            
+            

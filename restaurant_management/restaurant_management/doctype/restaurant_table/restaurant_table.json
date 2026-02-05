@@ -1,29 +1,36 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
  "autoname": "field:table_number",
  "creation": "2025-12-29 15:49:33.425041",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "table_number",
   "company",
   "restaurant_branch",
+  "floor",
+  "table_number",
   "seating_capacity",
   "status",
-  "current_order",
+  "is_active",
   "column_break_wkdi",
-  "current_reservation",
-  "reservation_datetime",
-  "floor",
+  "current_order",
   "cleaning_start_time",
-  "is_active"
+  "qr_code",
+  "section_break_imsk",
+  "reservation_details",
+  "reservation_details_section",
+  "current_reservation",
+  "column_break_cxrw",
+  "reservation_datetime"
  ],
  "fields": [
   {
    "fieldname": "table_number",
    "fieldtype": "Data",
    "label": "Table Number",
+   "reqd": 1,
    "unique": 1
   },
   {
@@ -31,13 +38,16 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Restaurant Branch",
-   "options": "Branch"
+   "options": "Branch",
+   "reqd": 1
   },
   {
    "fieldname": "seating_capacity",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Seating Capacity"
+   "label": "Seating Capacity",
+   "non_negative": 1,
+   "reqd": 1
   },
   {
    "fieldname": "status",
@@ -92,13 +102,40 @@
    "fieldname": "company",
    "fieldtype": "Link",
    "label": "Company",
-   "options": "Company"
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "qr_code",
+   "fieldtype": "HTML",
+   "label": "QR Code"
+  },
+  {
+   "fieldname": "reservation_details_section",
+   "fieldtype": "Section Break",
+   "label": "Reservation Details"
+  },
+  {
+   "fieldname": "column_break_cxrw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_imsk",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Reservation Info"
+  },
+  {
+   "fieldname": "reservation_details",
+   "fieldtype": "Table",
+   "label": "Reservation Details",
+   "options": "Reservation Details"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-02 14:04:36.990081",
+ "modified": "2026-02-05 14:44:11.623869",
  "modified_by": "Administrator",
  "module": "Restaurant Management",
  "name": "Restaurant Table",

@@ -12,8 +12,9 @@
   "table",
   "customer",
   "column_break_wjwi",
-  "restaurant_branch",
   "company",
+  "restaurant_branch",
+  "current_reservation",
   "section_break_unkk",
   "items",
   "section_break_aaul",
@@ -25,7 +26,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Order Type",
-   "options": "\nDine-In\nTakeaway\nDelivery"
+   "options": "\nDine-In\nTakeaway"
   },
   {
    "depends_on": "eval: doc.order_type==\"Dine-In\"",
@@ -40,7 +41,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Customer",
-   "options": "Customer"
+   "options": "Customer",
+   "reqd": 1
   },
   {
    "fieldname": "restaurant_branch",
@@ -68,12 +70,13 @@
    "options": "Company"
   },
   {
-   "depends_on": "eval: doc.workflow_state==\"Billed\"",
+   "depends_on": "eval: doc.workflow_state==\"Closed\"",
    "fieldname": "sales_invoice",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Sales Invoice",
-   "options": "Sales Invoice"
+   "options": "Sales Invoice",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_wjwi",
@@ -93,12 +96,18 @@
    "fieldname": "details_section",
    "fieldtype": "Section Break",
    "label": "Details"
+  },
+  {
+   "fieldname": "current_reservation",
+   "fieldtype": "Link",
+   "label": "Current Reservation",
+   "options": "Reservation"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-02 11:37:57.300176",
+ "modified": "2026-01-30 18:31:19.244205",
  "modified_by": "Administrator",
  "module": "Restaurant Management",
  "name": "Restaurant Order",

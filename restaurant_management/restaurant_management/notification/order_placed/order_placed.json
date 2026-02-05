@@ -1,0 +1,31 @@
+{
+ "attach_print": 0,
+ "channel": "System Notification",
+ "condition": "doc.workflow_state == \"Ready\"",
+ "creation": "2026-01-08 16:09:21.385813",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Restaurant Order",
+ "enabled": 1,
+ "event": "Value Change",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "<p>Order {{ doc.name }} is ready.</p>\n\n<p>Table: {{ doc.table }}\nPrepared by Kitchen</p>\n\n<p>Please serve the customer.</p>\n\n<p><a href=\"/app/restaurant-order/{{ doc.name }}\">Open Order</a></p>\n",
+ "message_type": "Markdown",
+ "modified": "2026-01-09 17:13:58.880476",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "Order Placed",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_document_field": "",
+   "receiver_by_role": "Waiter"
+  }
+ ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
+ "subject": "Order Ready",
+ "value_changed": "workflow_state"
+}

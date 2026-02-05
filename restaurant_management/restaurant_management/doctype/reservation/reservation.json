@@ -12,15 +12,16 @@
   "restaurant_branch",
   "customer",
   "contact",
+  "email_id",
   "column_break_azgg",
   "guest_no",
-  "additional_request",
   "datetime",
+  "additional_request",
   "table_allocation_tab",
   "table_info_section",
   "table_info",
-  "restaurant_order",
   "financial_info_tab",
+  "advance_deposite_info_section",
   "advance_deposite_invoice",
   "cancellation_tab",
   "cancel_required",
@@ -35,13 +36,15 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Customer",
-   "options": "Customer"
+   "options": "Customer",
+   "reqd": 1
   },
   {
    "fieldname": "datetime",
    "fieldtype": "Datetime",
    "in_list_view": 1,
-   "label": "Datetime"
+   "label": "Datetime",
+   "reqd": 1
   },
   {
    "fieldname": "contact",
@@ -59,7 +62,9 @@
    "fieldname": "guest_no",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Guest No."
+   "label": "Guest No.",
+   "non_negative": 1,
+   "reqd": 1
   },
   {
    "fieldname": "cancellation_tab",
@@ -88,7 +93,8 @@
    "depends_on": "eval: doc.cancel_required",
    "fieldname": "cancellation_charge",
    "fieldtype": "Currency",
-   "label": "Cancellation Charge"
+   "label": "Cancellation Charge",
+   "options": "currency"
   },
   {
    "depends_on": "eval: doc.cancel_required",
@@ -111,7 +117,8 @@
    "fieldname": "advance_deposite_invoice",
    "fieldtype": "Link",
    "label": "Advance Deposite invoice",
-   "options": "Sales Invoice"
+   "options": "Payment Entry",
+   "read_only": 1
   },
   {
    "fieldname": "additional_request",
@@ -119,16 +126,11 @@
    "label": "Additional Request"
   },
   {
-   "fieldname": "restaurant_order",
-   "fieldtype": "Link",
-   "label": "Restaurant Order",
-   "options": "Restaurant Order"
-  },
-  {
    "fieldname": "table_info",
    "fieldtype": "Table",
    "label": "Table Info",
-   "options": "Table Details"
+   "options": "Table Details",
+   "reqd": 1
   },
   {
    "fieldname": "table_allocation_tab",
@@ -156,12 +158,24 @@
    "label": "Restaurant Branch",
    "link_filters": "[]",
    "options": "Branch"
+  },
+  {
+   "fieldname": "advance_deposite_info_section",
+   "fieldtype": "Section Break",
+   "label": "Advance Deposite Info"
+  },
+  {
+   "fieldname": "email_id",
+   "fieldtype": "Data",
+   "label": "Email Id",
+   "options": "Email",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-05 10:01:07.815721",
+ "modified": "2026-02-05 10:16:37.422933",
  "modified_by": "Administrator",
  "module": "Restaurant Management",
  "name": "Reservation",

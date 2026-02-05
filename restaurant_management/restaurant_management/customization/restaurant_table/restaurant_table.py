@@ -11,4 +11,5 @@ def free_table_after_cleaning(table_name):
     table.status = "Free"
     table.cleaning_start_time = None
     table.current_order = None
+    table.current_reservation = None
     table.save(ignore_permissions=True)

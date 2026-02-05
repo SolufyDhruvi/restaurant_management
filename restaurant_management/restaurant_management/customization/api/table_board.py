@@ -1,117 +1,180 @@
 import frappe
 import json
 from frappe.model.workflow import apply_workflow
+from frappe.utils import now_datetime
+from frappe.utils import flt
+import frappe
+import json
+from frappe.model.workflow import apply_workflow
+from frappe.utils import now_datetime
+
 
 @frappe.whitelist()
-def create_order(table, customer=None, items=None):
-    """
-    Create a Restaurant Order for a table.
-    Works for both walk-in and reservation guests.
-    """
+def create_order(table, customer=None, items=None, company=None, branch=None):
     if isinstance(items, str):
         items = json.loads(items)
 
-    order = frappe.new_doc("Restaurant Order")
-    order.table = table
-    order.customer = customer
-    order.order_type = "Dine-In"
-    order.workflow_state = "Draft"
+    if not items:
+        frappe.throw("No items received")
+
+    tab = frappe.get_doc("Restaurant Table", table)
+    customer = frappe.get_value("Customer", customer) if customer else None
+    if tab.current_order:
+        order = frappe.get_doc("Restaurant Order", tab.current_order)
+        if order.workflow_state == "Ready":
+            order.workflow_state = "Cooking"
+
+    else:
+        order = frappe.new_doc("Restaurant Order")
+        order.table = table
+        order.company = company
+        order.restaurant_branch = branch
+        order.customer = customer
+        order.order_type = "Dine-In"
+        order.workflow_state = "Cooking"
 
     for i in items:
-        item_doc = frappe.get_doc("Item", i.get("item"))
-        
-        # Get default BOM if exists
-        bom = frappe.db.get_value("BOM", {"item": item_doc.name, "is_active": 1, "is_default": 1})
-        
-        order.append("items", {
-            "item": item_doc.name,
-            "qty": i.get("qty", 1),
-            "status": "Pending",
-            "is_new_item": 1,
-            "bom": bom  # save BOM link
-        })
-        
-        # Optional: Auto-create Work Order if BOM exists
-        if bom:
-            # frappe.throw(bom)
-            wo = frappe.new_doc("Work Order")
-            wo.production_item = item_doc.name
-            wo.bom_no = bom
-            wo.qty = i.get("qty", 1)
-            wo.company = order.company  # replace with your company
-            wo.fg_warehouse = "Finished Goods - S"
-            wo.wip_warehouse = "Work In Progress - S"
-            wo.custom_restaurant_order = order.name
-            wo.save(ignore_permissions=True)
-            wo.submit()
+        item_code = i.get("item")
+        qty = int(i.get("qty", 1))
+        sent = int(i.get("sent_qty", 0))
+        existing = None
+        for row in order.items:
+            if row.item == item_code:
+                existing = row
+                break
 
-    order.insert(ignore_permissions=True)
+        if existing:
+            existing.qty += qty
+            existing.last_batch_qty = qty - sent
+            # existing.sent_qty += qty
+            existing.is_new_item = 1
+            existing.status = "Cooking"
+            order.workflow_state = "Cooking"
 
-    # Update table
-    frappe.db.set_value(
-        "Restaurant Table",
-        table,
-        {
-            "status": "Occupied",
-            "current_order": order.name
-        }
-    )
+            if existing.last_batch_qty > 0:
+                existing.last_batch_qty = existing.qty - existing.sent_qty
+        else:
+            order.append("items", {
+                "item": item_code,
+                "qty": qty,
+                "last_batch_qty": qty,
+                "status": "Cooking",
+                "is_new_item": 1
+            })
+            order.workflow_state = "Cooking"
+
+    if order.is_new():
+        order.insert(ignore_permissions=True)
+        frappe.db.set_value(
+            "Restaurant Table",
+            table,
+            {
+                "status": "Occupied",
+                "current_order": order.name
+            }
+        )
+    else:
+        order.save(ignore_permissions=True)
 
     return order.name
+
+@frappe.whitelist()
+def finalize_bill(table, discount=0, payment_mode="Cash", company=None):
+    try:
+        tab = frappe.get_doc("Restaurant Table", table)
+        tab.reload() 
+
+        if not tab.current_order:
+            frappe.throw("There is No active order for this table.")
+
+        order_id = tab.current_order
+        order = frappe.get_doc("Restaurant Order", order_id)
+        order.reload()
+
+        if not company:
+            company = order.company or frappe.defaults.get_default("company")
+
+        # 2. Calculation
+        subtotal = sum([flt(d.amount) for d in order.items])
+        discount_pct = flt(discount)
+        discount_amount = (subtotal * discount_pct) / 100
+        final_amount = subtotal - discount_amount
+
+        si = frappe.new_doc("Sales Invoice")
+        si.company = company
+        si.customer = order.customer
+        si.custom_restaurant_order = order_id
+        si.update_stock = 0
+        si.posting_date = frappe.utils.nowdate()
+        si.due_date = frappe.utils.nowdate()
+        si.status = "Paid"
+        for item in order.items:
+            si.append("items", {
+                "item_code": item.item,
+                "qty": item.qty,
+                "rate": item.rate,
+                "amount": item.amount,
+            })
+        
+        if discount_pct > 0:
+            si.additional_discount_percentage = discount_pct
+
+        # si.set_missing_values()
+        si.insert(ignore_permissions=True)
+        si.submit()
+        pe = frappe.new_doc("Payment Entry")
+        pe.payment_type = "Receive"
+        pe.company = si.company
+        pe.posting_date = si.posting_date
+        pe.party_type = "Customer"
+        pe.party = si.customer
+        pe.paid_from = frappe.db.get_value("Company", si.company, "default_receivable_account")
+        pe.paid_to = frappe.db.get_value("Company", si.company, "default_cash_account")
+        pe.paid_amount = si.grand_total
+        pe.received_amount = si.grand_total
+
+        pe.append("references", {
+            "reference_doctype": "Sales Invoice",
+            "reference_name": si.name,
+            "allocated_amount": si.grand_total
+        })
+
+        pe.insert(ignore_permissions=True)
+        pe.submit()
+        frappe.db.set_value("Restaurant Order", order_id, "workflow_state", "Closed")
+        
+        frappe.db.set_value("Restaurant Table", table, {
+            "status": "Free",
+            "current_order": ""
+        })
+
+        return {"invoice_id": si.name}
+
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "POS Finalize Conflict Error")
+        frappe.throw(f"Bill is not Finalize: {str(e)}")
 
 @frappe.whitelist()
 def get_current_order(table):
-    """
-    Get the current active order of a table.
-    """
-    table_doc = frappe.get_doc("Restaurant Table", table)
-    if table_doc.get("current_order"):
-        order_doc = frappe.get_doc("Restaurant Order", table_doc.current_order)
-        return {
-            "name": order_doc.name,
-            "table": order_doc.table,
-            "customer": order_doc.customer,
-            "items": [{"item": d.item, "qty": d.qty} for d in order_doc.items]
-        }
-    return None
+    tab = frappe.get_doc("Restaurant Table", table)
 
-@frappe.whitelist()
-def update_existing_order(order_name, items):
-    """
-    Add new items to existing order.
-    """
-    if isinstance(items, str):
-        items = json.loads(items)
+    if not tab.current_order:
+        return None
 
-    order = frappe.get_doc("Restaurant Order", order_name)
-    for i in items:
-        item_doc = frappe.get_doc("Item", i.get("item"))
-        
-        # Get default BOM if exists
-        bom = frappe.db.get_value("BOM", {"item": item_doc.name, "is_active": 1, "is_default": 1})
-        
-        order.append("items", {
-            "item": item_doc.name,
-            "qty": i.get("qty", 1),
-            "status": "Pending",
-            "is_new_item": 1,
-            "bom": bom  # save BOM link
-        })
-        
-        if bom:
-            wo = frappe.new_doc("Work Order")
-            wo.production_item = item_doc.name
-            wo.bom_no = bom
-            wo.qty = i.get("qty", 1)
-            wo.company = order.company
-            wo.fg_warehouse = "Finished Goods - S"
-            wo.wip_warehouse = "Work In Progress - S"
-            wo.custom_restaurant_order = order.name
-            wo.save(ignore_permissions=True)
-            wo.submit()
+    order = frappe.get_doc("Restaurant Order", tab.current_order)
 
-    if order.workflow_state == "Ready":
-        apply_workflow(order, "Add More Items")
-
-    order.save(ignore_permissions=True)
-    return order.name
+    return {
+        "order": order.name,
+        "company": order.company,
+        "restaurant_branch": order.restaurant_branch,
+        "customer": order.customer,
+        "items": [
+            {
+                "item": d.item,
+                "item_name": frappe.db.get_value("Item", d.item, "item_name"),
+                "qty": d.qty,
+                "rate": d.rate or 0
+            }
+            for d in order.items
+        ]
+    }

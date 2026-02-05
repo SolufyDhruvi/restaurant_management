@@ -1,0 +1,38 @@
+{
+ "Item": [
+  {
+   "dt": "Item",
+   "fieldname": "custom_menu_category",
+   "fieldtype": "Select",
+   "insert_after": "custom_prep_time",
+   "label": "Menu Category",
+   "module": "Restaurant Management",
+   "options": "\nMain Course\nBeverage\nStarter\nBread\nDessert"
+  },
+  {
+   "dt": "Item",
+   "fieldname": "custom_prep_time",
+   "fieldtype": "Float",
+   "insert_after": "custom_food_type",
+   "label": "Prep Time",
+   "module": "Restaurant Management"
+  },
+  {
+   "dt": "Item",
+   "fieldname": "custom_food_type",
+   "fieldtype": "Select",
+   "insert_after": "custom_is_menu_item",
+   "label": "Food Type",
+   "module": "Restaurant Management",
+   "options": "\nVeg\nNon Veg"
+  },
+  {
+   "dt": "Item",
+   "fieldname": "custom_is_menu_item",
+   "fieldtype": "Check",
+   "insert_after": "stock_uom",
+   "label": "Is Menu Item",
+   "module": "Restaurant Management"
+  }
+ ]
+}

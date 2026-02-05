@@ -1,0 +1,50 @@
+{
+ "cards": [
+  {
+   "card": "Total Waiter"
+  },
+  {
+   "card": "Total chefs"
+  },
+  {
+   "card": "Low Stock Items"
+  },
+  {
+   "card": "Vegetables in Stock"
+  },
+  {
+   "card": "Dairy in Stock"
+  },
+  {
+   "card": "Total Main Course Item"
+  },
+  {
+   "card": "Total Starter Item"
+  },
+  {
+   "card": "Total Beverages Item"
+  }
+ ],
+ "charts": [
+  {
+   "chart": "Daily Customer Count",
+   "width": "Half"
+  },
+  {
+   "chart": "Daily Sales Invoice Count",
+   "width": "Half"
+  }
+ ],
+ "creation": "2026-01-07 16:32:51.448557",
+ "dashboard_name": "Info Board",
+ "docstatus": 0,
+ "doctype": "Dashboard",
+ "idx": 1,
+ "is_default": 0,
+ "is_standard": 1,
+ "modified": "2026-01-20 14:31:40.809993",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "Info Board",
+ "owner": "Administrator"
+}

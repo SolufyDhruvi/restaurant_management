@@ -20,12 +20,4 @@ frappe.ui.form.on("Reservation", {
             }
         }
 	},
-    // workflow_state(frm){
-    //     if(frm.doc.workflow_state == "Confirmed"){
-    //         frm.call({
-    //             method: "on_workflow_state_change",
-    //             doc: frm.doc
-    //         })
-    //     }
-    // }
 });

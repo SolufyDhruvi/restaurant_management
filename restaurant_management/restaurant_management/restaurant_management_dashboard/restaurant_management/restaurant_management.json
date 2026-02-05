@@ -1,0 +1,21 @@
+{
+ "cards": [],
+ "charts": [
+  {
+   "chart": "Top Selling Dishes",
+   "width": "Full"
+  }
+ ],
+ "creation": "2026-01-07 16:22:33.599664",
+ "dashboard_name": "Restaurant Management",
+ "docstatus": 0,
+ "doctype": "Dashboard",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "modified": "2026-01-07 16:22:33.599664",
+ "modified_by": "Administrator",
+ "module": "Restaurant Management",
+ "name": "Restaurant Management",
+ "owner": "Administrator"
+}
