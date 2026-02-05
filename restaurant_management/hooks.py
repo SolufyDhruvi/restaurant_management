@@ -144,10 +144,10 @@ doc_events = {
 	},
 	"Stock Entry": {
 		"on_submit": "restaurant_management.restaurant_management.customization.work_order.work_order.on_update"
-	},
-    "Payment Entry":{
-        "on_update": "restaurant_management.restaurant_management.customization.payment_entry.payment_entry.fatch_advance_payment_id"
 	}
+    # "Payment Entry":{
+    #     "on_update": "restaurant_management.restaurant_management.customization.payment_entry.payment_entry.fatch_advance_payment_id"
+	# }
 }
 
 # Scheduled Tasks
