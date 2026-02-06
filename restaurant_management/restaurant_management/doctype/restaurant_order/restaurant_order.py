@@ -6,24 +6,7 @@ from frappe.model.workflow import apply_workflow
 from frappe.utils import flt, now_datetime
 
 class RestaurantOrder(Document):
-	def on_update(self):				
-		if self.workflow_state == "Billed" and self.table:
-			frappe.db.set_value(
-				"Restaurant Table",
-				self.table,
-				{
-					"status": "Cleaning",
-					"cleaning_start_time": now_datetime(),
-					"current_order": None,
-					"current_reservation": None
-				}
-			)
-			frappe.enqueue(
-				method="restaurant_management.restaurant_management.customization.restaurant_table.restaurant_table.free_table_after_cleaning",
-				queue="long",
-				table_name=self.table,
-				enqueue_after_commit=True
-			)
+	def on_update(self):
 		if (self.workflow_state == "Cooking" and self.items and all(i.status == "Ready" for i in self.items)):
 			self.db_set("workflow_state", "Ready")
 	

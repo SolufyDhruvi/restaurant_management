@@ -2,6 +2,7 @@
 // For license information, please see license.txt
 frappe.ui.form.on('Restaurant Table', {
 	refresh(frm) {
+		//QR code functionality
 
 		if (!frm.doc.table_number) return;
 

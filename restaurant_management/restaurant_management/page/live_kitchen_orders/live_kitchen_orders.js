@@ -94,7 +94,18 @@ frappe.pages['live-kitchen-orders'].on_page_load = function(wrapper) {
     </style>`).appendTo(page.body);
 
     const kds_grid = $('<div class="kds-layout"></div>').appendTo(page.body);
-    const audio = new Audio("/assets/restaurant_management/sounds/order_ready.mp3");
+    function speak_text(text) {
+        if (!window.speechSynthesis) return;
+
+        let utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "hi-IN"; 
+        utterance.rate = 1;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+    }
 
     function get_time_diff(creation) {
         if (!creation) return "00:00";
@@ -151,8 +162,13 @@ frappe.pages['live-kitchen-orders'].on_page_load = function(wrapper) {
                         });
 
                         Promise.all(calls).then(() => {
-                            audio.play().catch(() => {});
-                            frappe.show_alert({ message: "Order Ready", indicator: "green" });
+                            speak_text(`Order number ${order_id} is ready to serve`);
+
+                            frappe.show_alert({
+                                message: `Order ${order_id} Ready`,
+                                indicator: "green"
+                            });
+
                             card.fadeOut(300, () => page.load_kitchen_data());
                         });
                     });

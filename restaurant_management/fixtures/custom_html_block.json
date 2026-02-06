@@ -1,0 +1,57 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Custom HTML Block",
+  "html": "<div id=\"sales-compare-dashboard\">\n  <div class=\"card-box split-box\">\n    <div class=\"split\">\n      <div class=\"part\" id=\"today-sales-box\">\n        <h2 id=\"today-sales\">0</h2>\n        <p>Today's Sales</p>\n      </div>\n\n      <div class=\"divider\"></div>\n\n      <div class=\"part\" id=\"yesterday-sales-box\">\n        <h2 id=\"yesterday-sales\">0</h2>\n        <p>Yesterday Sales</p>\n      </div>\n    </div>\n  </div>\n</div>\n",
+  "modified": "2026-02-06 16:31:56.781768",
+  "name": "Today vs Yesterday Sales",
+  "private": 0,
+  "roles": [],
+  "script": "let today = frappe.datetime.get_today();\nlet yesterday = frappe.datetime.add_days(today, -1);\n\n// Get company currency\nlet company_currency = frappe.defaults.get_default(\"currency\");\n\n// -------- TODAY PAID SALES --------\nfrappe.call({\n  method: \"frappe.client.get_list\",\n  args: {\n    doctype: \"Sales Invoice\",\n    filters: {\n      status: \"Paid\",\n      posting_date: today\n    },\n    fields: [\"grand_total\"],\n    limit_page_length: 0\n  },\n  callback: function (r) {\n    let total = 0;\n    (r.message || []).forEach(row => {\n      total += row.grand_total || 0;\n    });\n\n    root_element.querySelector(\"#today-sales\").textContent =\n      format_currency(total, company_currency);\n  }\n});\n\n// Click → Today Paid Sales\nroot_element.querySelector(\"#today-sales-box\").addEventListener(\"click\", function () {\n  frappe.set_route(\"List\", \"Sales Invoice\", {\n    status: \"Paid\",\n    posting_date: today\n  });\n});\n\n\n// -------- YESTERDAY PAID SALES --------\nfrappe.call({\n  method: \"frappe.client.get_list\",\n  args: {\n    doctype: \"Sales Invoice\",\n    filters: {\n      status: \"Paid\",\n      posting_date: yesterday\n    },\n    fields: [\"grand_total\"],\n    limit_page_length: 0\n  },\n  callback: function (r) {\n    let total = 0;\n    (r.message || []).forEach(row => {\n      total += row.grand_total || 0;\n    });\n\n    root_element.querySelector(\"#yesterday-sales\").textContent =\n      format_currency(total, company_currency);\n  }\n});\n\n// Click → Yesterday Paid Sales\nroot_element.querySelector(\"#yesterday-sales-box\").addEventListener(\"click\", function () {\n  frappe.set_route(\"List\", \"Sales Invoice\", {\n    status: \"Paid\",\n    posting_date: yesterday\n  });\n});\n",
+  "style": "#sales-compare-dashboard .card-box {\n  background: linear-gradient(135deg, #EEAECA, #94BBE9);\n  color: #fff;\n  padding: 22px;\n  border-radius: 18px;\n  margin: 10px 0;\n  box-shadow: 0 6px 16px rgba(0,0,0,0.25);\n}\n\n.split {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n\n.part {\n  flex: 1;\n  text-align: center;\n  cursor: pointer;\n  transition: transform 0.2s ease;\n}\n\n.part:hover {\n  transform: scale(1.05);\n}\n\n.divider {\n  width: 2px;\n  background: rgba(255,255,255,0.4);\n  margin: 0 18px;\n  border-radius: 2px;\n}\n\n#sales-compare-dashboard h2 {\n  font-size: 1.5rem;\n  margin: 0;\n  font-weight: 700;\n  color: white;\n}\n\n#sales-compare-dashboard p {\n  margin-top: 6px;\n  font-size: 1rem;\n  opacity: 0.9;\n}\n\n#sales-compare-dashboard small {\n  display: block;\n  margin-top: 10px;\n  text-align: center;\n  opacity: 0.85;\n  font-size: 0.9rem;\n}\n"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom HTML Block",
+  "html": "<div id=\"order-status-dashboard\">\n  <div class=\"card-box split-box\">\n    <div class=\"split\">\n      <div class=\"part\" id=\"cooking-box\">\n        <h2 id=\"cooking-count\">0</h2>\n        <p>Cooking</p>\n      </div>\n      <div class=\"divider\"></div>\n\n      <div class=\"part\" id=\"ready-box\">\n        <h2 id=\"ready-count\">0</h2>\n        <p>Ready to Serve</p>\n      </div>\n    </div>\n    <small>Live kitchen order status for today</small>\n  </div>\n</div>\n",
+  "modified": "2026-02-06 16:32:18.035588",
+  "name": "Cooking vs Ready Orders (Today)",
+  "private": 0,
+  "roles": [],
+  "script": "let today = frappe.datetime.get_today();\n\n// ===== Cooking Orders (Today) =====\nfrappe.call({\n    method: \"frappe.client.get_list\",\n    args: {\n        doctype: \"Restaurant Order\",\n        filters: [\n            [\"workflow_state\", \"=\", \"Cooking\"],\n            [\"creation\", \"between\", [\n                today + \" 00:00:00\",\n                today + \" 23:59:59\"\n            ]]\n        ],\n        fields: [\"name\"]\n    },\n    callback: function (r) {\n        let count = r.message ? r.message.length : 0;\n        root_element.querySelector(\"#cooking-count\").textContent = count;\n    }\n});\n\n// Click → Cooking list\nroot_element.querySelector(\"#cooking-box\").addEventListener(\"click\", function () {\n    frappe.set_route(\"List\", \"Restaurant Order\", {\n        \"workflow_state\": \"Cooking\",\n        \"creation\": [\"between\", [\n            today + \" 00:00:00\",\n            today + \" 23:59:59\"\n        ]]\n    });\n});\n\n\n// ===== Ready Orders (Today) =====\nfrappe.call({\n    method: \"frappe.client.get_list\",\n    args: {\n        doctype: \"Restaurant Order\",\n        filters: [\n            [\"workflow_state\", \"=\", \"Ready\"],\n            [\"creation\", \"between\", [\n                today + \" 00:00:00\",\n                today + \" 23:59:59\"\n            ]]\n        ],\n        fields: [\"name\"]\n    },\n    callback: function (r) {\n        let count = r.message ? r.message.length : 0;\n        root_element.querySelector(\"#ready-count\").textContent = count;\n    }\n});\n\n// Click → Ready list\nroot_element.querySelector(\"#ready-box\").addEventListener(\"click\", function () {\n    frappe.set_route(\"List\", \"Restaurant Order\", {\n        \"workflow_state\": \"Ready\",\n        \"creation\": [\"between\", [\n            today + \" 00:00:00\",\n            today + \" 23:59:59\"\n        ]]\n    });\n});\n",
+  "style": ".card-box {\n  background: linear-gradient(135deg, #57C785, #EDDD53);\n  color: #fff;\n  padding: 22px;\n  border-radius: 18px;\n  text-align: center;\n  margin: 10px 0;\n  box-shadow: 0 6px 12px rgba(0,0,0,0.18);\n  cursor: pointer;\n  transition: transform 0.2s ease, box-shadow 0.2s ease;\n}\n\n.split {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n\n.part {\n  flex: 1;\n}\n\n.divider {\n  width: 2px;\n  background: rgba(255,255,255,0.6);\n  margin: 0 18px;\n  border-radius: 2px;\n}\n\n.card-box h2 {\n  font-size: 1.5rem;\n  margin: 0;\n  font-weight: 700;\n  color: white;\n}\n\n.card-box p {\n  margin-top: 6px;\n  font-size: 1rem;\n  opacity: 0.9;\n}\n\n.card-box:hover {\n  transform: scale(1.02);\n  box-shadow: 0 10px 18px rgba(0,0,0,0.28);\n}\n"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom HTML Block",
+  "html": "<iframe\n  src=\"http://127.0.0.1:8000/insights/shared/chart/mqhdjo9to5\"\n  width=\"100%\"\n  height=\"350\"\n  frameborder=\"0\"\n  style=\"border: none;\"\n  allowfullscreen>\n</iframe>\n",
+  "modified": "2026-02-06 16:07:37.115247",
+  "name": "Top Selling Dishes",
+  "private": 0,
+  "roles": [],
+  "script": null,
+  "style": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom HTML Block",
+  "html": "<div id=\"reservation-dashboard\">\n  <div class=\"row\">\n    <div class=\"col-sm-12\">\n      <div class=\"card-box split-box\">\n        <div class=\"split\">\n          <div class=\"part\" id=\"today-box\">\n            <h2 id=\"todays-reservation\">0</h2>\n            <p>Today's Reservation</p>\n          </div>\n\n          <div class=\"divider\"></div>\n\n          <div class=\"part\" id=\"tomorrow-box\">\n            <h2 id=\"tomorrow-reservation\">0</h2>\n            <p>Tomorrow Reservation</p>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n",
+  "modified": "2026-02-06 16:32:08.729494",
+  "name": "Restaurant Reservation Insight",
+  "private": 0,
+  "roles": [],
+  "script": "let today = frappe.datetime.get_today();\nlet tomorrow = frappe.datetime.add_days(today, 1);\n\n// ===== Today Reservations =====\nfrappe.call({\n    method: \"frappe.client.get_list\",\n    args: {\n        doctype: \"Reservation\",\n        filters: [\n            [\"workflow_state\", \"=\", \"Confirmed\"],\n            [\"datetime\", \"between\", [\n                today + \" 00:00:00\",\n                today + \" 23:59:59\"\n            ]]\n        ],\n        fields: [\"name\"]\n    },\n    callback: function(r) {\n        let count = r.message ? r.message.length : 0;\n        root_element.querySelector(\"#todays-reservation\").textContent = count;\n    }\n});\n\n// Click → open list (Today)\nroot_element.querySelector(\"#today-box\").addEventListener(\"click\", function () {\n    frappe.set_route(\"List\", \"Reservation\", {\n        \"workflow_state\": \"Confirmed\",\n        \"datetime\": [\"between\", [\n            today + \" 00:00:00\",\n            today + \" 23:59:59\"\n        ]]\n    });\n});\n\n\n// ===== Tomorrow Reservations =====\nfrappe.call({\n    method: \"frappe.client.get_list\",\n    args: {\n        doctype: \"Reservation\",\n        filters: [\n            [\"workflow_state\", \"=\", \"Confirmed\"],\n            [\"datetime\", \"between\", [\n                tomorrow + \" 00:00:00\",\n                tomorrow + \" 23:59:59\"\n            ]]\n        ],\n        fields: [\"name\"]\n    },\n    callback: function(r) {\n        let count = r.message ? r.message.length : 0;\n        root_element.querySelector(\"#tomorrow-reservation\").textContent = count;\n    }\n});\n\n// Click → open list (Tomorrow)\nroot_element.querySelector(\"#tomorrow-box\").addEventListener(\"click\", function () {\n    frappe.set_route(\"List\", \"Reservation\", {\n        \"workflow_state\": \"Confirmed\",\n        \"datetime\": [\"between\", [\n            tomorrow + \" 00:00:00\",\n            tomorrow + \" 23:59:59\"\n        ]]\n    });\n});\n",
+  "style": ".card-box {\n  background: linear-gradient(135deg, #2A7B9B, #57C785);\n  color: #fff;\n  padding: 22px;\n  border-radius: 18px;\n  text-align: center;\n  margin: 10px 0;\n  box-shadow: 0 6px 12px rgba(0,0,0,0.18);\n  cursor: pointer;\n  transition: transform 0.2s ease, box-shadow 0.2s ease;\n}\n\n.split {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n\n.part {\n  flex: 1;\n}\n\n.divider {\n  width: 2px;\n  background: rgba(255,255,255,0.6);\n  margin: 0 18px;\n  border-radius: 2px;\n}\n\n.card-box h2 {\n  font-size: 1.5rem;\n  margin: 0;\n  font-weight: 700;\n  color: white;\n}\n\n.card-box p {\n  margin-top: 6px;\n  font-size: 1rem;\n  opacity: 0.9;\n}\n\n.card-box:hover {\n  transform: scale(1.02);\n  box-shadow: 0 10px 18px rgba(0,0,0,0.28);\n}\n"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom HTML Block",
+  "html": "<h2 style=\"text-align:center;\">🏤 Restaurant Management 🏤</h2>",
+  "modified": "2026-01-07 16:05:20.314874",
+  "name": "Restaurant Management",
+  "private": 0,
+  "roles": [],
+  "script": null,
+  "style": null
+ }
+]

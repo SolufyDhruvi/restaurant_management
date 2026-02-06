@@ -5,6 +5,9 @@ frappe.pages['restaurant-table-lay'].on_page_load = function (wrapper) {
         title: 'Restaurant Floor Plan',
         single_column: true
     });
+    setInterval(() => {
+        load_tables_by_floor(); // OR location.reload();
+    }, 15000);
 
     page.add_menu_item('Add Table', () => {
         open_table_dialog();
@@ -119,8 +122,8 @@ frappe.pages['restaurant-table-lay'].on_page_load = function (wrapper) {
         }
             
         .reservation-view {
-            top: 9px;
-            left:9px;
+            top: -3px;
+            left:21px;
             position: absolute;
             color: #e67e22;
             cursor: pointer;
@@ -175,262 +178,281 @@ frappe.pages['restaurant-table-lay'].on_page_load = function (wrapper) {
     let main_container = $('<div></div>').appendTo(page.body);
 
     /* ---------------- TABLE CREATE / UPDATE ---------------- */
-    function open_table_dialog(table = null) {
+function open_table_dialog(table = null) {
 
-        let is_edit = !!table;
+    let is_edit = !!table;
 
-        let d = new frappe.ui.Dialog({
-            title: is_edit ? `Edit Table ${table.name}` : 'Add New Table',
-            fields: [
-                { label: 'Company', fieldname: 'company', fieldtype: 'Link', options: 'Company', reqd: 1 },
-                { label: 'Restaurant Branch', fieldname: 'restaurant_branch', fieldtype: 'Link', options: 'Branch', reqd: 1 },
-                { label: 'Floor', fieldname: 'floor', fieldtype: 'Link', options: 'Restaurant Floor', reqd: 1 },
-                { label: 'Table Number', fieldname: 'table_number', fieldtype: 'Data', reqd: 1 },
-                { label: 'Seating Capacity', fieldname: 'seating_capacity', fieldtype: 'Int', reqd: 1 },
-                {
-                    label: 'Status',
-                    fieldname: 'status',
-                    fieldtype: 'Select',
-                    options: ['Free', 'Occupied', 'Reserved'],
-                    default: 'Free'
-                },
-                { label: 'Active', fieldname: 'is_active', fieldtype: 'Check', default: 1 }
-            ],
-            primary_action_label: is_edit ? 'Update' : 'Create',
-            primary_action(values) {
+    let d = new frappe.ui.Dialog({
+        title: is_edit ? `Edit Table ${table.name}` : 'Add New Table',
+        size: 'large',
+        fields: [
+            { label: 'Company', fieldname: 'company', fieldtype: 'Link', options: 'Company', reqd: 1 },
+            { label: 'Restaurant Branch', fieldname: 'restaurant_branch', fieldtype: 'Link', options: 'Branch', reqd: 1 },
+            { label: 'Floor', fieldname: 'floor', fieldtype: 'Link', options: 'Restaurant Floor', reqd: 1 },
+            { label: 'Table Number', fieldname: 'table_number', fieldtype: 'Data', reqd: 1 },
+            { label: 'Seating Capacity', fieldname: 'seating_capacity', fieldtype: 'Int', reqd: 1 },
+            {
+                label: 'Status',
+                fieldname: 'status',
+                fieldtype: 'Select',
+                options: ['Free', 'Occupied', 'Reserved'],
+                default: 'Free'
+            },
+            { label: 'Active', fieldname: 'is_active', fieldtype: 'Check', default: 1 }
+        ],
+        primary_action_label: is_edit ? 'Update' : 'Create',
+        primary_action(values) {
 
-                if (is_edit) {
-                    frappe.db.set_value('Restaurant Table', table.name, values)
-                        .then(() => {
-                            frappe.show_alert({ message: 'Table Updated', indicator: 'green' });
-                            d.hide();
-                            load_tables_by_floor();
-                        });
-                } else {
-                    frappe.db.insert({
-                    doctype: 'Restaurant Table',
-                    company: values.company,
-                    restaurant_branch: values.restaurant_branch,
-                    floor: values.floor,
-                    table_number: values.table_number,
-                    seating_capacity: values.seating_capacity,
-                    status: values.status || 'Free',
-                    is_active: values.is_active
-                }).then(() => {
-                    frappe.show_alert({
-                        message: 'Table Created Successfully',
-                        indicator: 'green'
-                    });
+            if (is_edit) {
+                frappe.db.set_value('Restaurant Table', table.name, values)
+                    .then(() => {
+                        frappe.show_alert({ message: 'Table Updated', indicator: 'green' });
                         d.hide();
                         load_tables_by_floor();
                     });
-                }
-            }
-        });
-
-        if (is_edit) {
-            d.set_values(table);
-        }
-
-        d.show();
-    }
-
-    /* ---------------- DELETE TABLE ---------------- */
-    function delete_table(table_name) {
-        frappe.confirm(
-            `Delete table <b>${table_name}</b>?`,
-            () => {
-                frappe.db.delete_doc('Restaurant Table', table_name)
-                    .then(() => {
-                        frappe.show_alert({ message: 'Table Deleted', indicator: 'red' });
-                        load_tables_by_floor();
-                    });
-            }
-        );
-    }
-    /* ---------------- RESERVATION ---------------- */
-    function open_reservation_dialog(table_name) {
-
-        let d = new frappe.ui.Dialog({
-            title: `Reserve Table ${table_name}`,
-            fields: [
-                { label: 'Customer', fieldname: 'customer', fieldtype: 'Link', options: 'Customer', reqd: 1 },
-                { label: 'Contact', fieldname: 'contact', fieldtype: 'Phone', reqd: 1 },
-                { label: 'Email', fieldname: 'email_id', fieldtype: 'Data' },
-                { label: 'No of Guests', fieldname: 'guest_no', fieldtype: 'Int', reqd: 1 },
-                { label: 'Date Time', fieldname: 'datetime', fieldtype: 'Datetime', reqd: 1 }
-            ],
-            primary_action_label: 'Reserve',
-            primary_action(values) {
-
+            } else {
                 frappe.db.insert({
-                    doctype: 'Reservation',
-                    workflow_state: 'Requested',
-                    customer: values.customer,
-                    contact: values.contact,
-                    email_id: values.email_id,
-                    guest_no: values.guest_no,
-                    datetime: values.datetime,
-                    table_info: [{ table: table_name }]
-                }).then((r) => {
-                    frappe.db.set_value('Restaurant Table', table_name, {'current_reservation': r.name })
-                        // frappe.db.set_value("Restaurant Table", table_name, "current_reservation", values.name)
-                        .then(() => {
-                            frappe.show_alert({ message: 'Table Reserved', indicator: 'orange' });
-                            d.hide();
-                            load_tables_by_floor();
-                        });
+                doctype: 'Restaurant Table',
+                company: values.company,
+                restaurant_branch: values.restaurant_branch,
+                floor: values.floor,
+                table_number: values.table_number,
+                seating_capacity: values.seating_capacity,
+                status: values.status || 'Free',
+                is_active: values.is_active
+            }).then(() => {
+                frappe.show_alert({
+                    message: 'Table Created Successfully',
+                    indicator: 'green'
+                });
+                    d.hide();
+                    load_tables_by_floor();
                 });
             }
-        });
+        }
+    });
 
-        d.show();
+    if (is_edit) {
+        d.set_values(table);
     }
 
-    /* ---------------- LOAD TABLES ---------------- */
-    function load_tables_by_floor() {
+    d.show();
+}
 
-        main_container.empty();
+/* ---------------- DELETE TABLE ---------------- */
+function delete_table(table_name) {
+    frappe.confirm(
+        `Delete table <b>${table_name}</b>?`,
+        () => {
+            frappe.db.delete_doc('Restaurant Table', table_name)
+                .then(() => {
+                    frappe.show_alert({ message: 'Table Deleted', indicator: 'red' });
+                    load_tables_by_floor();
+                });
+        }
+    );
+}
+/* ---------------- RESERVATION ---------------- */
+function open_reservation_dialog(table_name) {
 
-        frappe.call({
-            method: 'frappe.client.get_list',
-            args: {
-                doctype: 'Restaurant Floor',
-                fields: ['name'],
-                filters: { is_active: 1 }
-            },
-            callback(rf) {
+    let d = new frappe.ui.Dialog({
+        title: `Reserve Table ${table_name}`,
+        size: 'large',
+        fields: [
+            { label: 'Customer', fieldname: 'customer', fieldtype: 'Link', options: 'Customer', reqd: 1 },
+            { label: 'Contact', fieldname: 'contact', fieldtype: 'Phone', reqd: 1 },
+            { label: 'Email', fieldname: 'email_id', fieldtype: 'Data' },
+            { label: 'No of Guests', fieldname: 'guest_no', fieldtype: 'Int', reqd: 1 },
+            { label: 'Date Time', fieldname: 'datetime', fieldtype: 'Datetime', reqd: 1 },
+            { label: 'Additional Request', fieldname: 'additional_request', fieldtype: 'Small Text', reqd: 1 }
+        ],
+        primary_action_label: 'Reserve',
+        primary_action(values) {
+        d.hide();
 
-                let floors = rf.message || [];
+            frappe.db.insert({
+                doctype: 'Reservation',
+                workflow_state: 'Requested',
+                customer: values.customer,
+                company: values.company,
+                restaurant_branch: values.restaurant_branch,
+                contact: values.contact,
+                email_id: values.email_id,
+                guest_no: values.guest_no,
+                datetime: values.datetime,
+                additional_request: values.additional_request,
+                table_info: [{ table: table_name }]
+            }).then(r => {
 
+                // ✅ JS WAY: Update child table
                 frappe.call({
-                    method: 'frappe.client.get_list',
+                    method: 'frappe.client.get',
                     args: {
                         doctype: 'Restaurant Table',
-                        fields: [
-                            'name',
-                            'seating_capacity',
-                            'floor',
-                            'current_reservation',
-                            'status',
-                            'company',
-                            'restaurant_branch',
-                            'table_number',
-                            'is_active'
-                        ],
-                        filters: { is_active: 1 }
+                        name: table_name
                     },
-                    callback(rt) {
+                    callback(res) {
 
-                        let tables = rt.message || [];
+                        let table_doc = res.message;
 
-                        floors.forEach(f => {
+                        table_doc.reservation_details =
+                            table_doc.reservation_details || [];
 
-                            let wrapper = $(`
-                                <div class="floor-wrapper">
-                                    <div>
-                                        <div class="floor-header">${f.name}</div>
-                                        <div class="table-grid normal-tables"></div>
-                                    </div>
-                                    <div class="upcoming-box">
-                                        <div class="upcoming-title">Upcoming Reservations</div>
-                                        <div class="table-grid upcoming-tables"></div>
-                                    </div>
-                                </div>
-                            `).appendTo(main_container);
-
-                            let floor_tables = tables.filter(t => t.floor === f.name);
-
-                            floor_tables.forEach(t => {
-                                
-
-                                if (!t.current_reservation) {
-                                    render_table(t, wrapper, false);
-                                    return;
-                                }
-                                // 🔒 If table is already occupied, DO NOTHING
-                                if (t.status === 'Occupied') {
-                                    render_table(t, wrapper, 'normal');
-                                    return;
-                                }
+                        table_doc.reservation_details.push({
+                            reservation: r.name,
+                            datetime: values.datetime,
+                            current_reservation: r.name
+                        });
 
 
-                                frappe.db.get_value(
-                                    'Reservation',
-                                    t.current_reservation,
-                                    ['datetime', 'workflow_state', 'creation']
-                                ).then(res => {
-
-                                    let r = res.message;
-                                    let now = moment();
-                                    let res_time = moment(r.datetime);
-
-                                    // ⛔ Reservation time passed → auto release
-                                    if (now.isSameOrAfter(res_time)) {
-                                        auto_release_table(t.name, t.current_reservation);
-                                        return;
-                                    }
-
-                                    // ⏳ Requested & not confirmed in 15 min → cancel
-                                    if (r.workflow_state === 'Requested') {
-                                        let created = moment(r.creation);
-                                        if (now.diff(created, 'minutes') >= 15) {
-                                            cancel_reservation(t.name, t.current_reservation);
-                                            return;
-                                        }
-                                        render_table(t, wrapper, 'normal');
-                                        return;
-                                    }
-                                    if (r.workflow_state === 'Confirmed') {
-
-                                        // 🔒 DO NOT override occupied table
-                                        if (t.status === 'Occupied') {
-                                            render_table(t, wrapper, 'normal');
-                                            return;
-                                        }
-
-                                        let now = moment();
-                                        let res_time = moment(r.datetime, "YYYY-MM-DD HH:mm:ss");
-                                        let upcoming_start = res_time.clone().subtract(30, 'minutes');
-
-                                        if (now.isSameOrAfter(upcoming_start) && now.isBefore(res_time)) {
-
-                                            frappe.db.set_value('Restaurant Table', t.name, 'status', 'Reserved');
-                                            render_table(t, wrapper, 'upcoming');
-
-                                        } else {
-
-                                            // ⚠️ Future reservation but currently free
-                                            render_table(t, wrapper, 'normal');
-                                        }
-                                    }
-
-
-
+                        frappe.call({
+                            method: 'frappe.client.save',
+                            args: { doc: table_doc },
+                            callback() {
+                                frappe.show_alert({
+                                    message: 'Reservation Created',
+                                    indicator: 'orange'
                                 });
-
-                            });
+                                load_tables_by_floor();
+                            }
                         });
                     }
                 });
-            }
-        });
-    }
-function auto_release_table(table_name, reservation_name) {
-
-    frappe.db.set_value('Reservation', reservation_name, 'workflow_state', 'Cancelled')
-        .then(() => {
-            frappe.db.set_value('Restaurant Table', table_name, {
-                current_reservation: null,
-                status: 'Free'
-            }).then(() => {
-                frappe.show_alert({
-                    message: `Table ${table_name} auto-released due to no-show`,
-                    indicator: 'red'
-                });
-                load_tables_by_floor();
             });
-        });
+        }         
+    });
+
+    d.show();
+}
+
+/* ---------------- LOAD TABLES ---------------- */
+function load_tables_by_floor() {
+
+    main_container.empty();
+
+    frappe.call({
+        method: 'frappe.client.get_list',
+        args: {
+            doctype: 'Restaurant Floor',
+            fields: ['name'],
+            filters: { is_active: 1 }
+        },
+        callback(rf) {
+
+            let floors = rf.message || [];
+
+            frappe.call({
+                method: 'frappe.client.get_list',
+                args: {
+                    doctype: 'Restaurant Table',
+                    fields: [
+                        'name',
+                        'seating_capacity',
+                        'floor',
+                        'status',
+                        'company',
+                        'restaurant_branch',
+                        'table_number',
+                        'is_active'
+                    ],
+                    filters: { is_active: 1 }
+                },
+                callback(rt) {
+
+                    let tables = rt.message || [];
+                    let promises = tables.map(t=>frappe.db.get_doc('Restaurant Table', t.name));
+                    
+                    Promise.all(promises).then(full_tables => {
+
+                    floors.forEach(f => {
+
+                        let wrapper = $(`
+                            <div class="floor-wrapper">
+                                <div>
+                                    <div class="floor-header">${f.name}</div>
+                                    <div class="table-grid normal-tables"></div>
+                                </div>
+                                <div class="upcoming-box">
+                                    <div class="upcoming-title">Upcoming Reservations</div>
+                                    <div class="table-grid upcoming-tables"></div>
+                                </div>
+                            </div>
+                        `).appendTo(main_container);
+
+                        let floor_tables = full_tables.filter(t => t.floor === f.name);
+
+                        floor_tables.forEach(t => {
+
+                            // default: do nothing until async completes
+
+                            if (!t.reservation_details || t.reservation_details.length === 0) {
+                                render_table(t, wrapper, 'normal');
+                                return;
+                            }
+
+                            let valid_reservation = [];
+                            let has_upcoming = false;
+                            let now = moment();
+
+                            let res_promises = t.reservation_details.map(rd => {
+                                return frappe.db.get_value(
+                                    'Reservation',
+                                    rd.current_reservation || rd.reservation,
+                                    ['datetime', 'workflow_state']
+                                ).then(res => {
+
+                                    let r = res.message;
+                                    if (!r || r.workflow_state === 'Cancelled') return;
+
+                                    valid_reservation.push({
+                                        ...rd,
+                                        datetime: r.datetime,
+                                        workflow_state: r.workflow_state
+                                    });
+
+                                    // 🔥 UPCOMING CHECK
+                                    if (r.workflow_state === 'Confirmed' && r.datetime) {
+                                        let res_time = moment(r.datetime);
+
+                                        if (
+                                            now.isSameOrAfter(res_time.clone().subtract(30, 'minutes')) &&
+                                            now.isBefore(res_time)
+                                        ) {
+                                            has_upcoming = true;
+                                        }
+                                    }
+                                });
+                            });
+
+                            Promise.all(res_promises).then(() => {
+
+                                // clean reservations
+                                t.reservation_details = valid_reservation;
+
+                                // 🔥 MOVE TABLE PROPERLY
+                                if (has_upcoming) {
+                                    frappe.db.set_value(
+                                        'Restaurant Table',
+                                        t.name,
+                                        'status',
+                                        'Reserved'
+                                    );
+                                    // t.status = 'Reserved';
+                                    render_table(t,wrapper,'upcoming');
+                                } else {
+                                    render_table(t, wrapper, 'normal');
+                                }
+                            });
+                        });
+
+                    });
+
+                    });
+                }
+
+            });
+        }
+    });
 }
 function render_table(t, wrapper, upcoming) {
 
@@ -485,73 +507,27 @@ function render_table(t, wrapper, upcoming) {
     });
     
     /* ---------- Reservation Logic ---------- */
-    if (t.current_reservation) {
-
-        frappe.db.get_value(
-            'Reservation',
-            t.current_reservation,
-            ['workflow_state', 'customer', 'guest_no', 'datetime']
-        ).then(res => {
-
-            let r = res.message;
-
-            // 🕒 Requested Reservation
-            if (r.workflow_state === 'Requested') {
-
-                $('<div class="reservation-view" title="Confirm Reservation">🕒</div>')
-                    .appendTo(card)
-                    .on('click', e => {
-                        e.stopPropagation();
-                        open_confirm_dialog(t.name, t.current_reservation, r);
-                    });
-
-                wrapper.find('.normal-tables').append(card);
-            }
-
-            
-            else if (r.workflow_state === 'Confirmed') {
-
-                $('<div class="checkin-icon" title="Check-In">✔️</div>')
-                    .appendTo(card)
-                    .on('click', e => {
-                        e.stopPropagation();
-                        check_in_reservation(t.name, t.current_reservation);
-                    });
-
-                $('<div class="cancel-icon" title="Cancel Reservation">❌</div>')
-                    .appendTo(card)
-                    .on('click', e => {
-                        e.stopPropagation();
-                        cancel_reservation(t.name, t.current_reservation);
-                    });
-                $('<div class="view-icon" title="View Reservation">ℹ️</div>')
-                    .appendTo(card)
-                    .on('click', e => {
-                        e.stopPropagation();
-                        open_view_reservation_dialog(t.current_reservation);
-                    });
-
-
-                // ✅ HERE IS THE FIX
-                if (upcoming === 'upcoming') {
-                    wrapper.find('.upcoming-tables').append(card);
-                } else {
-                    wrapper.find('.normal-tables').append(card);
-                }
-            }
-
-        });
-
-    } else {
-
-        // Free table → Reserve icon
-        $('<div class="reserve-icon">📅</div>')
+    if (t.reservation_details && t.reservation_details.length > 0) {
+        // Sirf 1 Icon (📋) dikhana hai chahe 10 reservation ho
+        $('<div class="reservation-view" title="View All Reservations">📋</div>')
+            .appendTo(card)
+            .on('click', e => {
+                e.stopPropagation();
+                open_multi_reservation_dialog(t); 
+            });
+    } 
+        $('<div class="reserve-icon" title="New Reservation">📅</div>')
             .appendTo(card)
             .on('click', e => {
                 e.stopPropagation();
                 open_reservation_dialog(t.name);
             });
+    
 
+    // Sahi grid me append karna
+    if (upcoming === 'upcoming') {
+        wrapper.find('.upcoming-tables').append(card);
+    } else {
         wrapper.find('.normal-tables').append(card);
     }
 
@@ -559,131 +535,195 @@ function render_table(t, wrapper, upcoming) {
         frappe.set_route('restaurant-pos', encodeURIComponent(t.name));
     });
 }
-function cancel_reservation(table_name, reservation_name) {
 
-    frappe.confirm(
-        'Cancel this reservation?',
-        () => {
-            frappe.db.set_value('Reservation', reservation_name, 'workflow_state', 'Cancelled')
-                .then(() => {
-                    frappe.db.set_value('Restaurant Table', table_name, {
-                        current_reservation: null,
-                        status: 'Free'
-                    }).then(() => {
-                        frappe.show_alert({
-                            message: 'Reservation Cancelled',
-                            indicator: 'red'
-                        });
+load_tables_by_floor();
+};
+
+function open_multi_reservation_dialog(t) {
+
+    let d = new frappe.ui.Dialog({
+        title: `Reservations for ${t.name}`,
+        size: 'large',
+        fields: [{ fieldtype: 'HTML', fieldname: 'list_html' }]
+    });
+
+    let res_promises = t.reservation_details.map(rd => {
+        return frappe.db.get_value(
+            'Reservation',
+            rd.reservation || rd.current_reservation,
+            ['name', 'customer', 'workflow_state', 'datetime']
+        );
+    });
+
+    Promise.all(res_promises).then(results => {
+
+        let now = moment();
+
+        // 🔥 Normalize + sort by nearest datetime
+        let reservations = results
+            .map(res => {
+                let r = res.message;
+                if (!r || !r.datetime) return null;
+
+                return {
+                    ...r,
+                    diff: Math.abs(moment(r.datetime).diff(now))
+                };
+            })
+            .filter(r => r !== null)
+            .sort((a, b) => a.diff - b.diff); // nearest first
+
+        let html = `
+        <style>
+            .nearest-row {
+                background: #fff6db;
+                animation: blinkRow 1s infinite;
+            }
+
+            @keyframes blinkRow {
+                0% { box-shadow: inset 0 0 0 rgba(243,156,18,0); }
+                50% { box-shadow: inset 0 0 12px rgba(243,156,18,0.8); }
+                100% { box-shadow: inset 0 0 0 rgba(243,156,18,0); }
+            }
+        </style>
+
+        <table class="table table-bordered" style="font-size:12px;">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+        reservations.forEach((r, index) => {
+
+            let actions = [];
+            let date = '';
+            let time = '';
+
+            if (r.datetime) {
+                let m = moment(r.datetime);
+                date = m.format('DD-MM-YYYY');
+                time = m.format('hh:mm A');
+            }
+
+            // Requested → Confirm + Cancel
+            if (r.workflow_state === 'Requested') {
+                actions.push(
+                    `<button class="btn btn-xs btn-primary"
+                        onclick="update_res_status('${r.name}', 'Confirmed')">
+                        Confirm
+                    </button>`
+                );
+                actions.push(
+                    `<button class="btn btn-xs btn-danger"
+                        onclick="cancel_reservation('${r.name}')">
+                        Cancel
+                    </button>`
+                );
+            }
+
+            // Confirmed → Check-in + Cancel
+            if (r.workflow_state === 'Confirmed') {
+                actions.push(
+                    `<button class="btn btn-xs btn-success"
+                        onclick="check_in_reservation('${t.name}', '${r.name}')">
+                        Check-in
+                    </button>`
+                );
+                actions.push(
+                    `<button class="btn btn-xs btn-danger"
+                        onclick="cancel_reservation('${r.name}')">
+                        Cancel
+                    </button>`
+                );
+            }
+
+            let row_class = index === 0 ? 'nearest-row' : '';
+
+            html += `<tr class="${row_class}">
+                <td>${index + 1}</td>
+                <td>${r.name}</td>
+                <td>${r.customer || '-'}</td>
+                <td>${date}</td>
+                <td>${time}</td>
+                <td>${r.workflow_state}</td>
+                <td>${actions.join(' ')}</td>
+            </tr>`;
+        });
+
+        html += `</tbody></table>`;
+
+        d.fields_dict.list_html.$wrapper.html(html);
+    });
+
+    d.show();
+    window.cur_dialog = d;
+
+    // ---------- GLOBAL HELPERS ----------
+
+    window.update_res_status = (id, status) => {
+        frappe.db.set_value('Reservation', id, 'workflow_state', status)
+            .then(() => {
+                frappe.show_alert(`Reservation ${status}`);
+                cur_dialog.hide();
+                load_tables_by_floor();
+            });
+    };
+
+    window.cancel_reservation = (id) => {
+        frappe.confirm(
+            'Are you sure you want to cancel this reservation?',
+            () => {
+                frappe.db.set_value('Reservation', id, 'workflow_state', 'Cancelled')
+                    .then(() => {
+                        frappe.show_alert('Reservation Cancelled');
+                        cur_dialog.hide();
                         load_tables_by_floor();
                     });
-                });
-        }
-    );
-}
+            }
+        );
+    };
 
+    window.check_in_reservation = (table_name, reservation_name) => {
+        frappe.confirm(
+            'Confirm customer check-in?',
+            () => {
 
-function check_in_reservation(table_name, reservation_name) {
+                frappe.db.set_value(
+                    'Reservation',
+                    reservation_name,
+                    'workflow_state',
+                    'Checked-In'
+                ).then(() => {
 
-    frappe.confirm(
-        'Confirm customer check-in?',
-        () => {
-            frappe.db.set_value('Reservation', reservation_name, 'workflow_state', 'Checked-In')
-                .then(() => {
-                    frappe.db.set_value('Restaurant Table', table_name, {
-                        current_reservation: null,
-                        status: 'Free'
-                    }).then(() => {
+                    frappe.db.set_value(
+                        'Restaurant Table',
+                        table_name,
+                        { status: 'Free' }
+                    ).then(() => {
+
                         frappe.show_alert({
                             message: 'Customer Checked-In',
                             indicator: 'green'
                         });
+
+                        if (window.cur_dialog) {
+                            cur_dialog.hide();
+                        }
+
                         load_tables_by_floor();
                     });
                 });
-        }
-    );
-}
-
-
-
-load_tables_by_floor();
-};
-function open_view_reservation_dialog(reservation_name) {
-
-    frappe.db.get_value(
-        'Reservation',
-        reservation_name,
-        [
-            'customer',
-            'contact',
-            'email_id',
-            'guest_no',
-            'datetime',
-            'workflow_state'
-        ]
-    ).then(res => {
-
-        let r = res.message;
-
-        let d = new frappe.ui.Dialog({
-            title: 'Reservation Details',
-            fields: [
-                { fieldtype: 'HTML', fieldname: 'details' }
-            ],
-            primary_action_label: 'Close',
-            primary_action() {
-                d.hide();
             }
-        });
-
-        d.fields_dict.details.$wrapper.html(`
-            <table class="table table-bordered">
-                <tr><th>Customer</th><td>${r.customer || '-'}</td></tr>
-                <tr><th>Contact</th><td>${r.contact || '-'}</td></tr>
-                <tr><th>Email</th><td>${r.email_id || '-'}</td></tr>
-                <tr><th>No of Guests</th><td>${r.guest_no}</td></tr>
-                <tr><th>Date & Time</th><td>${r.datetime}</td></tr>
-                <tr><th>Status</th><td><b>${r.workflow_state}</b></td></tr>
-            </table>
-        `);
-
-        d.show();
-    });
+        );
+    };
 }
 
-
-function open_confirm_dialog(table_name, reservation_name, data) {
-
-    let d = new frappe.ui.Dialog({
-        title: 'Confirm Reservation',
-        fields: [
-            { fieldtype: 'HTML', fieldname: 'info' }
-        ],
-        primary_action_label: 'Confirm',
-        primary_action() {
-
-            frappe.db.set_value(
-                'Reservation',
-                reservation_name,
-                'workflow_state',
-                'Confirmed'
-            ).then(() => {
-                frappe.show_alert({
-                    message: 'Reservation Confirmed',
-                    indicator: 'green'
-                });
-                d.hide();
-                load_tables_by_floor();
-            });
-        }
-    });
-
-    d.fields_dict.info.$wrapper.html(`
-        <p><b>Customer:</b> ${data.customer}</p>
-        <p><b>Guests:</b> ${data.guest_no}</p>
-        <p><b>Date & Time:</b> ${data.datetime}</p>
-    `);
-
-    d.show();
-}
 

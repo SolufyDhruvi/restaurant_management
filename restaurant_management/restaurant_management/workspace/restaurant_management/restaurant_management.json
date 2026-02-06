@@ -1,11 +1,23 @@
 {
  "charts": [],
- "content": "[{\"id\":\"h6qQUKc0No\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Restaurant Management\",\"col\":12}},{\"id\":\"SUlRsRYtxJ\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Top Selling Dishes\",\"col\":12}},{\"id\":\"E4cP4-WnLx\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Screen Display</span>\",\"col\":12}},{\"id\":\"IPJhdUH0wK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\" Table Occupancy Board\",\"col\":3}},{\"id\":\"05LfmwGO_2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Kitchen Display\",\"col\":3}},{\"id\":\"6snnc2l3r1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Menu\",\"col\":3}},{\"id\":\"LpzqqfsknB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Waiter Screen\",\"col\":3}},{\"id\":\"cs-HVHN5Q_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"POS\",\"col\":3}},{\"id\":\"R9voXWhZeS\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Masters</b></span>\",\"col\":12}},{\"id\":\"RsMQHVP8Yb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Reservation\",\"col\":3}},{\"id\":\"QfsZlqhQqA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Restaurant Table\",\"col\":3}},{\"id\":\"ej5fAAnS2g\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Restaurant Order\",\"col\":3}},{\"id\":\"XMIPXTxXRE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"BOM\",\"col\":3}},{\"id\":\"5YPMFgc_oz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order\",\"col\":3}},{\"id\":\"M7u3UPe-2j\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"IoN_9kVOcl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Info Board\",\"col\":3}},{\"id\":\"cGMhGiWIAj\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Report</b></span>\",\"col\":12}},{\"id\":\"r7jkScDWS7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Menu Performance Report\",\"col\":3}}]",
- "creation": "2025-12-26 13:06:28.099089",
+ "content": "[{\"id\":\"h6qQUKc0No\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Restaurant Management\",\"col\":12}},{\"id\":\"SUlRsRYtxJ\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Top Selling Dishes\",\"col\":12}},{\"id\":\"AJnrKaS64w\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Restaurant Reservation Insight\",\"col\":4}},{\"id\":\"zO2rdkp35d\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Today vs Yesterday Sales\",\"col\":4}},{\"id\":\"7ewBq1v51i\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Cooking vs Ready Orders (Today)\",\"col\":4}},{\"id\":\"IPJhdUH0wK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\" Table Occupancy Board\",\"col\":3}},{\"id\":\"05LfmwGO_2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Kitchen Display\",\"col\":3}},{\"id\":\"6snnc2l3r1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Menu\",\"col\":3}},{\"id\":\"LpzqqfsknB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Waiter Screen\",\"col\":3}},{\"id\":\"R9voXWhZeS\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Masters</b></span>\",\"col\":12}},{\"id\":\"RsMQHVP8Yb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Reservation\",\"col\":3}},{\"id\":\"QfsZlqhQqA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Restaurant Table\",\"col\":3}},{\"id\":\"ej5fAAnS2g\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Restaurant Order\",\"col\":3}},{\"id\":\"M7u3UPe-2j\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"IoN_9kVOcl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Info Board\",\"col\":3}}]",
+ "creation": "2026-02-05 15:44:04.299415",
  "custom_blocks": [
+  {
+   "custom_block_name": "Cooking vs Ready Orders (Today)",
+   "label": "Cooking vs Ready Orders (Today)"
+  },
   {
    "custom_block_name": "Top Selling Dishes",
    "label": "Top Selling Dishes"
+  },
+  {
+   "custom_block_name": "Today vs Yesterday Sales",
+   "label": "Today vs Yesterday Sales"
+  },
+  {
+   "custom_block_name": "Restaurant Reservation Insight",
+   "label": "Restaurant Reservation Insight"
   },
   {
    "custom_block_name": "Restaurant Management",
@@ -22,7 +34,7 @@
  "is_hidden": 0,
  "label": "Restaurant Management",
  "links": [],
- "modified": "2026-01-23 10:18:28.469325",
+ "modified": "2026-02-06 16:21:21.179261",
  "modified_by": "Administrator",
  "module": "Restaurant Management",
  "name": "Restaurant Management",
@@ -35,6 +47,22 @@
  "sequence_id": 1.0,
  "shortcuts": [
   {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Reservation",
+   "link_to": "Reservation",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Restaurant Table",
+   "link_to": "Restaurant Table",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
    "color": "Grey",
    "doc_view": "List",
    "label": "Menu",
@@ -42,34 +70,18 @@
    "type": "Page"
   },
   {
-   "color": "Grey",
+   "color": "Green",
    "doc_view": "List",
-   "label": "BOM",
-   "link_to": "BOM",
+   "label": "Restaurant Order",
+   "link_to": "Restaurant Order",
    "stats_filter": "[]",
    "type": "DocType"
   },
   {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Work Order",
-   "link_to": "Work Order",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
+   "color": "Green",
    "doc_view": "List",
    "label": "Sales Invoice",
    "link_to": "Sales Invoice",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Restaurant Table",
-   "link_to": "Restaurant Table",
    "stats_filter": "[]",
    "type": "DocType"
   },
@@ -90,14 +102,6 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Menu Performance Report",
-   "link_to": "Menu Performance Report",
-   "report_ref_doctype": "Restaurant Order",
-   "type": "Report"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
    "label": "Info Board",
    "link_to": "Info Board",
    "type": "Dashboard"
@@ -108,29 +112,6 @@
    "label": "Waiter Screen",
    "link_to": "waiter-orders",
    "type": "Page"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Reservation",
-   "link_to": "Reservation",
-   "stats_filter": "[]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "POS",
-   "link_to": "restaurant-pos",
-   "type": "Page"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Restaurant Order",
-   "link_to": "Restaurant Order",
-   "stats_filter": "[]",
-   "type": "DocType"
   }
  ],
  "title": "Restaurant Management"

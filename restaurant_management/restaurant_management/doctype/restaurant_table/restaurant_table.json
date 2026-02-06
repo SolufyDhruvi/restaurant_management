@@ -7,6 +7,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "table_details_section",
   "company",
   "restaurant_branch",
   "floor",
@@ -16,14 +17,9 @@
   "is_active",
   "column_break_wkdi",
   "current_order",
-  "cleaning_start_time",
   "qr_code",
   "section_break_imsk",
-  "reservation_details",
-  "reservation_details_section",
-  "current_reservation",
-  "column_break_cxrw",
-  "reservation_datetime"
+  "reservation_details"
  ],
  "fields": [
   {
@@ -77,24 +73,6 @@
    "options": "Restaurant Floor"
   },
   {
-   "fieldname": "cleaning_start_time",
-   "fieldtype": "Time",
-   "label": "Cleaning Start Time"
-  },
-  {
-   "fieldname": "current_reservation",
-   "fieldtype": "Link",
-   "label": "Current Reservation",
-   "options": "Reservation"
-  },
-  {
-   "depends_on": "eval: doc.current_reservation",
-   "fetch_from": "current_reservation.datetime",
-   "fieldname": "reservation_datetime",
-   "fieldtype": "Datetime",
-   "label": "Reservation Datetime"
-  },
-  {
    "fieldname": "column_break_wkdi",
    "fieldtype": "Column Break"
   },
@@ -111,31 +89,26 @@
    "label": "QR Code"
   },
   {
-   "fieldname": "reservation_details_section",
-   "fieldtype": "Section Break",
-   "label": "Reservation Details"
-  },
-  {
-   "fieldname": "column_break_cxrw",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "section_break_imsk",
    "fieldtype": "Section Break",
-   "hidden": 1,
-   "label": "Reservation Info"
+   "label": "Reservation Details"
   },
   {
    "fieldname": "reservation_details",
    "fieldtype": "Table",
    "label": "Reservation Details",
    "options": "Reservation Details"
+  },
+  {
+   "fieldname": "table_details_section",
+   "fieldtype": "Section Break",
+   "label": "Table Details"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-05 14:44:11.623869",
+ "modified": "2026-02-06 14:12:58.671737",
  "modified_by": "Administrator",
  "module": "Restaurant Management",
  "name": "Restaurant Table",
