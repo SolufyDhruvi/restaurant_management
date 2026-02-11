@@ -30,15 +30,6 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2026-02-06 14:54:11.136305",
-  "name": "Closed",
-  "style": "Danger",
-  "workflow_state_name": "Closed"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "",
   "modified": "2025-12-25 10:27:41.976622",
   "name": "Draft",
   "style": "",
@@ -57,10 +48,28 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2026-02-06 14:52:28.235552",
-  "name": "Cancelled",
+  "modified": "2026-02-06 14:54:11.136305",
+  "name": "Closed",
   "style": "Danger",
-  "workflow_state_name": "Cancelled"
+  "workflow_state_name": "Closed"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2025-12-25 10:28:16.966918",
+  "name": "Billed",
+  "style": "",
+  "workflow_state_name": "Billed"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-02-10 18:54:28.333149",
+  "name": "Check-Out",
+  "style": "Danger",
+  "workflow_state_name": "Check-Out"
  },
  {
   "docstatus": 0,
@@ -70,6 +79,15 @@
   "name": "Checked-In",
   "style": "Primary",
   "workflow_state_name": "Checked-In"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-02-06 14:52:28.235552",
+  "name": "Cancelled",
+  "style": "Danger",
+  "workflow_state_name": "Cancelled"
  },
  {
   "docstatus": 0,
@@ -102,10 +120,10 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2025-12-25 10:28:16.966918",
-  "name": "Billed",
-  "style": "",
-  "workflow_state_name": "Billed"
+  "modified": "2026-02-06 14:53:26.749109",
+  "name": "Requested",
+  "style": "Inverse",
+  "workflow_state_name": "Requested"
  },
  {
   "docstatus": 0,
@@ -120,18 +138,18 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2026-02-06 14:55:31.265924",
-  "name": "Cooking",
-  "style": "Info",
-  "workflow_state_name": "Cooking"
+  "modified": "2026-02-09 15:29:03.860576",
+  "name": "Open",
+  "style": "",
+  "workflow_state_name": "Open"
  },
  {
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2026-02-06 14:53:26.749109",
-  "name": "Requested",
-  "style": "Inverse",
-  "workflow_state_name": "Requested"
+  "modified": "2026-02-06 14:55:31.265924",
+  "name": "Cooking",
+  "style": "Info",
+  "workflow_state_name": "Cooking"
  }
 ]
