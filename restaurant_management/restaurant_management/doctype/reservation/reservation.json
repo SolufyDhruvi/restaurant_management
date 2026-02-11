@@ -23,6 +23,7 @@
   "financial_info_tab",
   "advance_deposite_info_section",
   "advance_deposite_invoice",
+  "advance_amount",
   "cancellation_tab",
   "cancel_required",
   "cancellation_reason",
@@ -117,8 +118,7 @@
    "fieldname": "advance_deposite_invoice",
    "fieldtype": "Link",
    "label": "Advance Deposite invoice",
-   "options": "Payment Entry",
-   "read_only": 1
+   "options": "Payment Entry"
   },
   {
    "fieldname": "additional_request",
@@ -156,7 +156,7 @@
    "fieldname": "restaurant_branch",
    "fieldtype": "Link",
    "label": "Restaurant Branch",
-   "link_filters": "[]",
+   "link_filters": "[[\"Branch\",\"custom_company\",\"=\",\"eval: doc.company\"]]",
    "options": "Branch"
   },
   {
@@ -170,12 +170,19 @@
    "label": "Email Id",
    "options": "Email",
    "reqd": 1
+  },
+  {
+   "fieldname": "advance_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Advance Amount",
+   "options": "currency"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-05 10:16:37.422933",
+ "modified": "2026-02-11 11:07:29.976945",
  "modified_by": "Administrator",
  "module": "Restaurant Management",
  "name": "Reservation",

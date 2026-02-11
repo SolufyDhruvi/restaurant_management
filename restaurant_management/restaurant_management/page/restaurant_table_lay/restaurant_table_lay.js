@@ -15,16 +15,6 @@ frappe.pages['restaurant-table-lay'].on_page_load = function (wrapper) {
 
     /* ---------------- CSS ---------------- */
     $(`<style>
-        .blink {
-            animation: blinkBorder 1s infinite;
-        }
-
-        @keyframes blinkBorder {
-            0% { box-shadow: 0 0 0 rgba(231,76,60,0); }
-            50% { box-shadow: 0 0 15px rgba(231,76,60,0.9); }
-            100% { box-shadow: 0 0 0 rgba(231,76,60,0); }
-        }
-
         .cancel-icon {
             position: absolute;
             top: 1px;
@@ -253,77 +243,77 @@ function delete_table(table_name) {
     );
 }
 /* ---------------- RESERVATION ---------------- */
-function open_reservation_dialog(table_name) {
+// function open_reservation_dialog(table_name) {
 
-    let d = new frappe.ui.Dialog({
-        title: `Reserve Table ${table_name}`,
-        size: 'large',
-        fields: [
-            { label: 'Customer', fieldname: 'customer', fieldtype: 'Link', options: 'Customer', reqd: 1 },
-            { label: 'Contact', fieldname: 'contact', fieldtype: 'Phone', reqd: 1 },
-            { label: 'Email', fieldname: 'email_id', fieldtype: 'Data' },
-            { label: 'No of Guests', fieldname: 'guest_no', fieldtype: 'Int', reqd: 1 },
-            { label: 'Date Time', fieldname: 'datetime', fieldtype: 'Datetime', reqd: 1 },
-            { label: 'Additional Request', fieldname: 'additional_request', fieldtype: 'Small Text', reqd: 1 }
-        ],
-        primary_action_label: 'Reserve',
-        primary_action(values) {
-        d.hide();
+//     let d = new frappe.ui.Dialog({
+//         title: `Reserve Table ${table_name}`,
+//         size: 'large',
+//         fields: [
+//             { label: 'Customer', fieldname: 'customer', fieldtype: 'Link', options: 'Customer', reqd: 1 },
+//             { label: 'Contact', fieldname: 'contact', fieldtype: 'Phone', reqd: 1 },
+//             { label: 'Email', fieldname: 'email_id', fieldtype: 'Data' },
+//             { label: 'No of Guests', fieldname: 'guest_no', fieldtype: 'Int', reqd: 1 },
+//             { label: 'Date Time', fieldname: 'datetime', fieldtype: 'Datetime', reqd: 1 },
+//             { label: 'Additional Request', fieldname: 'additional_request', fieldtype: 'Small Text', reqd: 1 }
+//         ],
+//         primary_action_label: 'Reserve',
+//         primary_action(values) {
+//         d.hide();
 
-            frappe.db.insert({
-                doctype: 'Reservation',
-                workflow_state: 'Requested',
-                customer: values.customer,
-                company: values.company,
-                restaurant_branch: values.restaurant_branch,
-                contact: values.contact,
-                email_id: values.email_id,
-                guest_no: values.guest_no,
-                datetime: values.datetime,
-                additional_request: values.additional_request,
-                table_info: [{ table: table_name }]
-            }).then(r => {
+//             frappe.db.insert({
+//                 doctype: 'Reservation',
+//                 workflow_state: 'Requested',
+//                 customer: values.customer,
+//                 company: values.company,
+//                 restaurant_branch: values.restaurant_branch,
+//                 contact: values.contact,
+//                 email_id: values.email_id,
+//                 guest_no: values.guest_no,
+//                 datetime: values.datetime,
+//                 additional_request: values.additional_request,
+//                 table_info: [{ table: table_name }]
+//             }).then(r => {
 
-                // ✅ JS WAY: Update child table
-                frappe.call({
-                    method: 'frappe.client.get',
-                    args: {
-                        doctype: 'Restaurant Table',
-                        name: table_name
-                    },
-                    callback(res) {
+//                 // ✅ JS WAY: Update child table
+//                 frappe.call({
+//                     method: 'frappe.client.get',
+//                     args: {
+//                         doctype: 'Restaurant Table',
+//                         name: table_name
+//                     },
+//                     callback(res) {
 
-                        let table_doc = res.message;
+//                         let table_doc = res.message;
 
-                        table_doc.reservation_details =
-                            table_doc.reservation_details || [];
+//                         table_doc.reservation_details =
+//                             table_doc.reservation_details || [];
 
-                        table_doc.reservation_details.push({
-                            reservation: r.name,
-                            datetime: values.datetime,
-                            current_reservation: r.name
-                        });
+//                         table_doc.reservation_details.push({
+//                             reservation: r.name,
+//                             datetime: values.datetime,
+//                             current_reservation: r.name
+//                         });
 
 
-                        frappe.call({
-                            method: 'frappe.client.save',
-                            args: { doc: table_doc },
-                            callback() {
-                                frappe.show_alert({
-                                    message: 'Reservation Created',
-                                    indicator: 'orange'
-                                });
-                                load_tables_by_floor();
-                            }
-                        });
-                    }
-                });
-            });
-        }         
-    });
+//                         frappe.call({
+//                             method: 'frappe.client.save',
+//                             args: { doc: table_doc },
+//                             callback() {
+//                                 frappe.show_alert({
+//                                     message: 'Reservation Created',
+//                                     indicator: 'orange'
+//                                 });
+//                                 load_tables_by_floor();
+//                             }
+//                         });
+//                     }
+//                 });
+//             });
+//         }         
+//     });
 
-    d.show();
-}
+//     d.show();
+// }
 
 /* ---------------- LOAD TABLES ---------------- */
 function load_tables_by_floor() {
@@ -431,17 +421,13 @@ function load_tables_by_floor() {
 
                                 // 🔥 MOVE TABLE PROPERLY
                                 if (has_upcoming) {
-                                    frappe.db.set_value(
-                                        'Restaurant Table',
-                                        t.name,
-                                        'status',
-                                        'Reserved'
-                                    );
-                                    // t.status = 'Reserved';
-                                    render_table(t,wrapper,'upcoming');
+                                    frappe.db.set_value('Restaurant Table', t.name, 'status', 'Reserved');
+                                    render_table(t, wrapper, 'upcoming');
                                 } else {
+                                    t._blink = false;
                                     render_table(t, wrapper, 'normal');
                                 }
+
                             });
                         });
 
@@ -475,17 +461,23 @@ function render_table(t, wrapper, upcoming) {
             }
         </div>
     `);
+
     // 💰 Load occupied table amount
         if (t.status === 'Occupied') {
             frappe.call({
                 method: 'restaurant_management.restaurant_management.doctype.restaurant_order.restaurant_order.get_table_amount',
                 args: { table: t.name },
                 callback(r) {
+                    const data = r.message || {};
+                    const amount = flt(data.amount || 0).toFixed(2);
+                    const symbol = data.currency_symbol || '';
+
                     card.find('.table-amount')
-                        .html(`₹ ${flt(r.message || 0).toFixed(2)}`);
+                        .html(`${symbol} ${amount}`);
                 }
             });
         }
+
 
 
     /* ---------- Actions ---------- */
@@ -539,54 +531,240 @@ function render_table(t, wrapper, upcoming) {
 load_tables_by_floor();
 };
 
-function open_multi_reservation_dialog(t) {
+function open_reservation_dialog(table_name) {
+    let d = new frappe.ui.Dialog({
+        title: `Reserve Table ${table_name}`,
+        size: 'large',
+        fields: [
+            { label: 'Company', fieldname: 'company', fieldtype: 'Link', options: 'Company', reqd: 1 },
+            { label: 'Restaurant Branch', fieldname: 'restaurant_branch', fieldtype: 'Link', options: 'Branch', reqd: 1 },
+            { label: 'Customer', fieldname: 'customer', fieldtype: 'Link', options: 'Customer', reqd: 1 },
+            { label: 'Contact', fieldname: 'contact', fieldtype: 'Phone', reqd: 1 },
+            { label: 'Email', fieldname: 'email_id', fieldtype: 'Data' },
+            { label: 'No of Guests', fieldname: 'guest_no', fieldtype: 'Int', reqd: 1 },
+            { label: 'Date Time', fieldname: 'datetime', fieldtype: 'Datetime', reqd: 1 },
+            { label: 'Additional Request', fieldname: 'additional_request', fieldtype: 'Small Text' }
+        ],
+        primary_action_label: 'Reserve',
+        primary_action(values) {
+            d.hide();
+
+            // Get advance settings first
+            Promise.all([
+                frappe.db.get_single_value('Restaurant Setting', 'advance_policy'),
+                frappe.db.get_single_value('Restaurant Setting', 'advance_per_table'),
+                frappe.db.get_single_value('Restaurant Setting', 'advance_per_guest')
+            ]).then(([policy, per_table, per_guest]) => {
+
+                let advance_amount =
+                    policy === 'Per Guest'
+                        ? values.guest_no * per_guest
+                        : per_table;
+                // Create reservation WITH advance_amount
+                frappe.db.insert({
+                    doctype: 'Reservation',
+                    workflow_state: 'Requested',
+                    company: values.company,
+                    restaurant_branch: values.restaurant_branch,
+                    customer: values.customer,
+                    contact: values.contact,
+                    email_id: values.email_id,
+                    guest_no: values.guest_no,
+                    datetime: values.datetime,
+                    additional_request: values.additional_request,
+                    table_info: [{ table: table_name }],
+                    advance_amount: advance_amount
+                }).then(r => {
+
+                    // Update Restaurant Table
+                    frappe.call({
+                        method: 'frappe.client.get',
+                        args: { doctype: 'Restaurant Table', name: table_name },
+                        callback(res) {
+                            let table_doc = res.message;
+                            table_doc.reservation_details ||= [];
+                            table_doc.reservation_details.push({
+                                reservation: r.name,
+                                datetime: values.datetime,
+                                current_reservation: r.name
+                            });
+                            frappe.db.get_value("Company", values.company, "default_currency").then(c_res => {
+                            let currency = c_res.message ? c_res.message.default_currency : '';
+                            if (!currency) currency = '';
+
+                            frappe.db.get_value("Currency", currency, "symbol").then(s_res => {
+                            let symbol = s_res.message ? s_res.message.symbol : '';
+
+                                frappe.call({
+                                    method: 'frappe.client.save',
+                                    args: { doc: table_doc },
+                                    callback() {
+                                        frappe.show_alert({
+                                            message: `Reservation Created (Advance ${symbol} ${advance_amount})`,
+                                            indicator: 'green'
+                                        });
+                                        load_tables_by_floor();
+                                    }
+                                });
+                                })
+                            })
+
+                            
+                        }
+                    });
+                });
+            });
+        }
+    });
+
+    d.show();
+}
+
+// async function open_multi_reservation_dialog(t) {
+//     let d = new frappe.ui.Dialog({
+//         title: `Reservations for ${t.name}`,
+//         size: 'large',
+//         fields: [
+//             { fieldtype: 'HTML', fieldname: 'list_html' }
+//         ]
+//     });
+
+//     // Fetch reservations
+//     let reservations_raw = await Promise.all(
+//         t.reservation_details.map(rd => 
+//             frappe.db.get_value(
+//                 'Reservation',
+//                 rd.reservation || rd.current_reservation,
+//                 ['name', 'customer', 'workflow_state', 'datetime', 'advance_amount', 'company']
+//             )
+//         )
+//     );
+
+//     let now = moment();
+
+//     let reservations = reservations_raw
+//         .map(r => r.message)
+//         .filter(Boolean)
+//         .sort((a, b) =>
+//             Math.abs(moment(a.datetime).diff(now)) -
+//             Math.abs(moment(b.datetime).diff(now))
+//         );
+
+//     let html = `
+//         <table class="table table-bordered" style="font-size:12px;">
+//             <thead>
+//                 <tr>
+//                     <th>#</th>
+//                     <th>ID</th>
+//                     <th>Customer</th>
+//                     <th>Date</th>
+//                     <th>Time</th>
+//                     <th>Status</th>
+//                     <th>Advance</th>
+//                     <th>Action</th>
+//                 </tr>
+//             </thead>
+//             <tbody>`;
+
+//     for (let index = 0; index < reservations.length; index++) {
+//         let r = reservations[index];
+//         let m = moment(r.datetime);
+
+//         let actions = [];
+//         if (r.workflow_state === 'Requested') {
+//             actions.push(`<button class="btn btn-xs btn-primary" onclick="update_res_status('${r.name}','Confirmed')">Confirm</button>`);
+//             actions.push(`<button class="btn btn-xs btn-warning" onclick="create_advance_payment('${r.name}')">Advance</button>`);
+//             actions.push(`<button class="btn btn-xs btn-danger" onclick="cancel_reservation('${r.name}')">Cancel</button>`);
+//         }
+//         if (r.workflow_state === 'Confirmed') {
+//             actions.push(`<button class="btn btn-xs btn-success" onclick="check_in_reservation('${t.name}','${r.name}')">Check-in</button>`);
+//             actions.push(`<button class="btn btn-xs btn-danger" onclick="cancel_reservation('${r.name}')">Cancel</button>`);
+//         }
+
+//         // Get currency symbol
+//         let currency = await frappe.db.get_value("Company", r.company, "default_currency");
+//         currency = currency.message ? currency.message.default_currency : null;
+
+//         let symbol = '';
+//         if (currency) {
+//             let curr = await frappe.db.get_value("Currency", currency, "symbol");
+//             symbol = curr.message ? curr.message.symbol : '';
+//         }
+
+//         html += `
+//             <tr>
+//                 <td>${index + 1}</td>
+//                 <td>${r.name}</td>
+//                 <td>${r.customer || '-'}</td>
+//                 <td>${m.format('DD-MM-YYYY')}</td>
+//                 <td>${m.format('hh:mm A')}</td>
+//                 <td>${r.workflow_state}</td>
+//                 <td>${symbol} ${r.advance_amount || 0}</td>
+//                 <td>${actions.join(' ')}</td>
+//             </tr>`;
+//     }
+
+//     html += `</tbody></table>`;
+
+//     d.fields_dict.list_html.$wrapper.html(html);
+//     d.show();
+//     window.cur_dialog = d;
+// }
+async function open_multi_reservation_dialog(t) {
+
+    // ✅ Add Blink CSS only once
+    if (!document.getElementById("reservation-blink-style")) {
+        const style = document.createElement("style");
+        style.id = "reservation-blink-style";
+        style.innerHTML = `
+            .blink-row {
+                animation: blinkRow 1s infinite;
+            }
+            @keyframes blinkRow {
+                0%   { background-color: rgba(231,76,60,0.1); }
+                50%  { background-color: rgba(231,76,60,0.35); }
+                100% { background-color: rgba(231,76,60,0.1); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
 
     let d = new frappe.ui.Dialog({
         title: `Reservations for ${t.name}`,
         size: 'large',
-        fields: [{ fieldtype: 'HTML', fieldname: 'list_html' }]
+        fields: [
+            { fieldtype: 'HTML', fieldname: 'list_html' }
+        ]
     });
 
-    let res_promises = t.reservation_details.map(rd => {
-        return frappe.db.get_value(
-            'Reservation',
-            rd.reservation || rd.current_reservation,
-            ['name', 'customer', 'workflow_state', 'datetime']
+    if (!t.reservation_details || t.reservation_details.length === 0) {
+        d.fields_dict.list_html.$wrapper.html("<p>No reservations found.</p>");
+        d.show();
+        return;
+    }
+
+    // ✅ Fetch reservations
+    let reservations_raw = await Promise.all(
+        t.reservation_details.map(rd =>
+            frappe.db.get_value(
+                'Reservation',
+                rd.reservation || rd.current_reservation,
+                ['name', 'customer', 'workflow_state', 'datetime', 'advance_amount', 'company']
+            )
+        )
+    );
+
+    let now = moment();
+
+    let reservations = reservations_raw
+        .map(r => r.message)
+        .filter(Boolean)
+        .sort((a, b) =>
+            Math.abs(moment(a.datetime).diff(now)) -
+            Math.abs(moment(b.datetime).diff(now))
         );
-    });
 
-    Promise.all(res_promises).then(results => {
-
-        let now = moment();
-
-        // 🔥 Normalize + sort by nearest datetime
-        let reservations = results
-            .map(res => {
-                let r = res.message;
-                if (!r || !r.datetime) return null;
-
-                return {
-                    ...r,
-                    diff: Math.abs(moment(r.datetime).diff(now))
-                };
-            })
-            .filter(r => r !== null)
-            .sort((a, b) => a.diff - b.diff); // nearest first
-
-        let html = `
-        <style>
-            .nearest-row {
-                background: #fff6db;
-                animation: blinkRow 1s infinite;
-            }
-
-            @keyframes blinkRow {
-                0% { box-shadow: inset 0 0 0 rgba(243,156,18,0); }
-                50% { box-shadow: inset 0 0 12px rgba(243,156,18,0.8); }
-                100% { box-shadow: inset 0 0 0 rgba(243,156,18,0); }
-            }
-        </style>
-
+    let html = `
         <table class="table table-bordered" style="font-size:12px;">
             <thead>
                 <tr>
@@ -596,134 +774,270 @@ function open_multi_reservation_dialog(t) {
                     <th>Date</th>
                     <th>Time</th>
                     <th>Status</th>
+                    <th>Advance</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>`;
 
-        reservations.forEach((r, index) => {
+    for (let index = 0; index < reservations.length; index++) {
 
-            let actions = [];
-            let date = '';
-            let time = '';
+        let r = reservations[index];
+        let m = moment(r.datetime);
 
-            if (r.datetime) {
-                let m = moment(r.datetime);
-                date = m.format('DD-MM-YYYY');
-                time = m.format('hh:mm A');
+        /* ---------------- ACTION BUTTONS ---------------- */
+        let actions = [];
+
+        if (r.workflow_state === 'Requested') {
+            actions.push(`<button class="btn btn-xs btn-primary" onclick="update_res_status('${r.name}','Confirmed')">Confirm</button>`);
+            actions.push(`<button class="btn btn-xs btn-warning" onclick="create_advance_payment('${r.name}')">Advance</button>`);
+            actions.push(`<button class="btn btn-xs btn-danger" onclick="cancel_reservation('${r.name}')">Cancel</button>`);
+        }
+
+        if (r.workflow_state === 'Confirmed') {
+            actions.push(`<button class="btn btn-xs btn-success" onclick="check_in_reservation('${t.name}','${r.name}')">Check-in</button>`);
+            actions.push(`<button class="btn btn-xs btn-danger" onclick="cancel_reservation('${r.name}')">Cancel</button>`);
+        }
+
+        /* ---------------- BLINK LOGIC ---------------- */
+        let is_blink = false;
+
+        if (r.workflow_state === 'Confirmed' && r.datetime) {
+            let res_time = moment(r.datetime);
+
+            if (
+                now.isSameOrAfter(res_time.clone().subtract(30, 'minutes')) &&
+                now.isBefore(res_time)
+            ) {
+                is_blink = true;
             }
+        }
 
-            // Requested → Confirm + Cancel
-            if (r.workflow_state === 'Requested') {
-                actions.push(
-                    `<button class="btn btn-xs btn-primary"
-                        onclick="update_res_status('${r.name}', 'Confirmed')">
-                        Confirm
-                    </button>`
-                );
-                actions.push(
-                    `<button class="btn btn-xs btn-danger"
-                        onclick="cancel_reservation('${r.name}')">
-                        Cancel
-                    </button>`
-                );
+        /* ---------------- GET CURRENCY SYMBOL ---------------- */
+        let symbol = '';
+
+        if (r.company) {
+            let currency_res = await frappe.db.get_value("Company", r.company, "default_currency");
+            let currency = currency_res.message ? currency_res.message.default_currency : null;
+
+            if (currency) {
+                let curr_res = await frappe.db.get_value("Currency", currency, "symbol");
+                symbol = curr_res.message ? curr_res.message.symbol : '';
             }
+        }
 
-            // Confirmed → Check-in + Cancel
-            if (r.workflow_state === 'Confirmed') {
-                actions.push(
-                    `<button class="btn btn-xs btn-success"
-                        onclick="check_in_reservation('${t.name}', '${r.name}')">
-                        Check-in
-                    </button>`
-                );
-                actions.push(
-                    `<button class="btn btn-xs btn-danger"
-                        onclick="cancel_reservation('${r.name}')">
-                        Cancel
-                    </button>`
-                );
-            }
-
-            let row_class = index === 0 ? 'nearest-row' : '';
-
-            html += `<tr class="${row_class}">
+        /* ---------------- TABLE ROW ---------------- */
+        html += `
+            <tr class="${is_blink ? 'blink-row' : ''}">
                 <td>${index + 1}</td>
                 <td>${r.name}</td>
                 <td>${r.customer || '-'}</td>
-                <td>${date}</td>
-                <td>${time}</td>
+                <td>${m.format('DD-MM-YYYY')}</td>
+                <td>${m.format('hh:mm A')}</td>
                 <td>${r.workflow_state}</td>
+                <td>${symbol} ${r.advance_amount || 0}</td>
                 <td>${actions.join(' ')}</td>
             </tr>`;
-        });
+    }
 
-        html += `</tbody></table>`;
+    html += `</tbody></table>`;
 
-        d.fields_dict.list_html.$wrapper.html(html);
-    });
-
+    d.fields_dict.list_html.$wrapper.html(html);
     d.show();
     window.cur_dialog = d;
-
-    // ---------- GLOBAL HELPERS ----------
-
-    window.update_res_status = (id, status) => {
-        frappe.db.set_value('Reservation', id, 'workflow_state', status)
-            .then(() => {
-                frappe.show_alert(`Reservation ${status}`);
-                cur_dialog.hide();
-                load_tables_by_floor();
-            });
-    };
-
-    window.cancel_reservation = (id) => {
-        frappe.confirm(
-            'Are you sure you want to cancel this reservation?',
-            () => {
-                frappe.db.set_value('Reservation', id, 'workflow_state', 'Cancelled')
-                    .then(() => {
-                        frappe.show_alert('Reservation Cancelled');
-                        cur_dialog.hide();
-                        load_tables_by_floor();
-                    });
-            }
-        );
-    };
-
-    window.check_in_reservation = (table_name, reservation_name) => {
-        frappe.confirm(
-            'Confirm customer check-in?',
-            () => {
-
-                frappe.db.set_value(
-                    'Reservation',
-                    reservation_name,
-                    'workflow_state',
-                    'Checked-In'
-                ).then(() => {
-
-                    frappe.db.set_value(
-                        'Restaurant Table',
-                        table_name,
-                        { status: 'Free' }
-                    ).then(() => {
-
-                        frappe.show_alert({
-                            message: 'Customer Checked-In',
-                            indicator: 'green'
-                        });
-
-                        if (window.cur_dialog) {
-                            cur_dialog.hide();
-                        }
-
-                        load_tables_by_floor();
-                    });
-                });
-            }
-        );
-    };
 }
 
 
+window.update_res_status = function (reservation_name, status) {
+    frappe.db.set_value('Reservation', reservation_name, 'workflow_state', status)
+        .then(() => {
+            frappe.show_alert(`Reservation ${status}`);
+            cur_dialog.hide();
+            load_tables_by_floor();
+        });
+};
+
+window.cancel_reservation = function (reservation_name) {
+    frappe.confirm('Cancel this reservation?', () => {
+        frappe.db.set_value('Reservation', reservation_name, 'workflow_state', 'Cancelled')
+            .then(() => {
+                frappe.show_alert('Reservation Cancelled');
+                cur_dialog.hide();
+                load_tables_by_floor();
+            });
+    });
+};
+window.check_in_reservation = function (table_name, reservation_name) {
+    frappe.confirm('Confirm customer check-in?', () => {
+
+        frappe.db.set_value('Reservation', reservation_name, 'workflow_state', 'Checked-In')
+            .then(() => {
+
+                frappe.db.set_value('Restaurant Table', table_name, 'status', 'Occupied')
+                    .then(() => {
+                        frappe.show_alert('Customer Checked-In');
+                        cur_dialog.hide();
+                        load_tables_by_floor();
+                    });
+            });
+    });
+};
+// window.create_advance_payment = function (reservation_name) {
+
+//     // 1️⃣ Get reservation details
+//     frappe.db.get_value(
+//         'Reservation',
+//         reservation_name,
+//         ['customer', 'advance_amount', 'datetime']
+//     ).then(r => {
+
+//         let res = r.message;
+
+//         if (!res || !res.advance_amount) {
+//             frappe.msgprint('Advance amount not set for this reservation');
+//             return;
+//         }
+
+//         // 2️⃣ Create Payment Entry
+//         frappe.call({
+//             method: 'frappe.client.insert',
+//             args: {
+//                 doc: {
+//                     doctype: 'Payment Entry',
+//                     payment_type: 'Receive',
+//                     party_type: 'Customer',
+//                     party: res.customer,
+//                     paid_amount: res.advance_amount,
+//                     received_amount: res.advance_amount,
+//                     custom_reservation: reservation_name,
+//                     reference_date: res.datetime,
+//                     mode_of_payment: 'Cash',
+//                     party_account: 'Debtors - SD',
+//                     paid_to: 'Cash - SD'
+//                 }
+//             }
+//         }).then(pe => {
+
+//             // 3️⃣ Submit Payment Entry
+//             frappe.call({
+//                 method: 'frappe.client.submit',
+//                 args: {
+//                     doc: pe.message
+//                 }
+//             }).then(() => {
+
+//                 // 4️⃣ Auto confirm reservation
+//                 frappe.db.set_value(
+//                     'Reservation',
+//                     reservation_name,
+//                     'workflow_state',
+//                     'Confirmed'
+//                 ).then(() => {
+
+//                     frappe.show_alert({
+//                         message: 'Advance received & Reservation Confirmed',
+//                         indicator: 'green'
+//                     });
+
+//                     if (window.cur_dialog) {
+//                         cur_dialog.hide();
+//                     }
+
+//                     load_tables_by_floor();
+//                 });
+//             });
+//         });
+//     });
+// };
+window.create_advance_payment = function (reservation_name) {
+
+    const payment_mode = "Cash";
+
+    // 1️⃣ Get reservation details
+    frappe.db.get_value(
+        "Reservation",
+        reservation_name,
+        ["customer", "advance_amount", "datetime", "company"]
+    ).then(r => {
+
+        const res = r.message;
+        if (!res || !res.advance_amount || res.advance_amount <= 0) {
+            frappe.msgprint("Advance amount not set");
+            return;
+        }
+
+        const company = res.company || frappe.defaults.get_default("company");
+
+        // 2️⃣ Get accounts safely from backend
+        frappe.call({
+            method: "restaurant_management.restaurant_management.customization.api.table_board.get_payment_accounts",
+            args: {
+                company: company,
+                mode_of_payment: payment_mode
+            }
+        }).then(acc => {
+
+            const party_account = acc.message.receivable;
+            const paid_to = acc.message.paid_to;
+
+            if (!party_account || !paid_to) {
+                frappe.throw("Payment accounts not configured");
+                return;
+            }
+
+            // 3️⃣ Create Payment Entry
+            frappe.call({
+                method: "frappe.client.insert",
+                args: {
+                    doc: {
+                        doctype: "Payment Entry",
+                        payment_type: "Receive",
+                        company: company,
+
+                        party_type: "Customer",
+                        party: res.customer,
+
+                        posting_date: res.datetime || frappe.datetime.nowdate(),
+                        reference_date: res.datetime,
+
+                        mode_of_payment: payment_mode,
+                        custom_reservation: reservation_name,
+
+                        paid_from: party_account,
+                        paid_to: paid_to,
+
+                        paid_amount: res.advance_amount,
+                        received_amount: res.advance_amount
+                    }
+                }
+            }).then(insert_res => {
+
+                // 4️⃣ Submit Payment Entry
+                return frappe.call({
+                    method: "frappe.client.submit",
+                    args: { doc: insert_res.message }
+                });
+
+            }).then(() => {
+
+                // 5️⃣ Confirm reservation
+                return frappe.db.set_value(
+                    "Reservation",
+                    reservation_name,
+                    "workflow_state",
+                    "Confirmed"
+                );
+
+            }).then(() => {
+
+                frappe.show_alert({
+                    message: "Advance received & Reservation Confirmed",
+                    indicator: "green"
+                });
+
+                if (window.cur_dialog) cur_dialog.hide();
+                load_tables_by_floor();
+            });
+        });
+    });
+};

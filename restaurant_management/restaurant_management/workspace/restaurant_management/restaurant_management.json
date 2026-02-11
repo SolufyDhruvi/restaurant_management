@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"h6qQUKc0No\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Restaurant Management\",\"col\":12}},{\"id\":\"SUlRsRYtxJ\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Top Selling Dishes\",\"col\":12}},{\"id\":\"AJnrKaS64w\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Restaurant Reservation Insight\",\"col\":4}},{\"id\":\"zO2rdkp35d\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Today vs Yesterday Sales\",\"col\":4}},{\"id\":\"7ewBq1v51i\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Cooking vs Ready Orders (Today)\",\"col\":4}},{\"id\":\"IPJhdUH0wK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\" Table Occupancy Board\",\"col\":3}},{\"id\":\"05LfmwGO_2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Kitchen Display\",\"col\":3}},{\"id\":\"6snnc2l3r1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Menu\",\"col\":3}},{\"id\":\"LpzqqfsknB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Waiter Screen\",\"col\":3}},{\"id\":\"R9voXWhZeS\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Masters</b></span>\",\"col\":12}},{\"id\":\"RsMQHVP8Yb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Reservation\",\"col\":3}},{\"id\":\"QfsZlqhQqA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Restaurant Table\",\"col\":3}},{\"id\":\"ej5fAAnS2g\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Restaurant Order\",\"col\":3}},{\"id\":\"M7u3UPe-2j\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"IoN_9kVOcl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Info Board\",\"col\":3}}]",
+ "content": "[{\"id\":\"h6qQUKc0No\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Restaurant Management\",\"col\":12}},{\"id\":\"SUlRsRYtxJ\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Top Selling Dishes\",\"col\":12}},{\"id\":\"AJnrKaS64w\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Restaurant Reservation Insight\",\"col\":4}},{\"id\":\"zO2rdkp35d\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Today vs Yesterday Sales\",\"col\":4}},{\"id\":\"7ewBq1v51i\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Cooking vs Ready Orders (Today)\",\"col\":4}},{\"id\":\"IPJhdUH0wK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\" Table Occupancy Board\",\"col\":3}},{\"id\":\"05LfmwGO_2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Kitchen Display\",\"col\":3}},{\"id\":\"6snnc2l3r1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Menu\",\"col\":3}},{\"id\":\"LpzqqfsknB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Waiter Screen\",\"col\":3}},{\"id\":\"R9voXWhZeS\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Masters</b></span>\",\"col\":12}},{\"id\":\"RsMQHVP8Yb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Reservation\",\"col\":3}},{\"id\":\"QfsZlqhQqA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Restaurant Table\",\"col\":3}},{\"id\":\"ej5fAAnS2g\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Restaurant Order\",\"col\":3}},{\"id\":\"M7u3UPe-2j\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"mP3QsTZpeC\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payment Entry\",\"col\":3}},{\"id\":\"IoN_9kVOcl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Info Board\",\"col\":3}}]",
  "creation": "2026-02-05 15:44:04.299415",
  "custom_blocks": [
   {
@@ -34,7 +34,7 @@
  "is_hidden": 0,
  "label": "Restaurant Management",
  "links": [],
- "modified": "2026-02-06 16:21:21.179261",
+ "modified": "2026-02-11 12:42:05.678429",
  "modified_by": "Administrator",
  "module": "Restaurant Management",
  "name": "Restaurant Management",
@@ -46,6 +46,14 @@
  "roles": [],
  "sequence_id": 1.0,
  "shortcuts": [
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Payment Entry",
+   "link_to": "Payment Entry",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
   {
    "color": "Green",
    "doc_view": "List",

@@ -15,6 +15,7 @@
   "company",
   "restaurant_branch",
   "current_reservation",
+  "currency",
   "section_break_unkk",
   "items",
   "section_break_aaul",
@@ -102,12 +103,19 @@
    "fieldtype": "Link",
    "label": "Current Reservation",
    "options": "Reservation"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Currency",
+   "options": "Currency"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-01-30 18:31:19.244205",
+ "modified": "2026-02-11 14:16:35.047025",
  "modified_by": "Administrator",
  "module": "Restaurant Management",
  "name": "Restaurant Order",
