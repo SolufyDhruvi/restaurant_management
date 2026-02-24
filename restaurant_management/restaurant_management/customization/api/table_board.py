@@ -1,12 +1,65 @@
 import frappe
 import json
 from frappe.model.workflow import apply_workflow
-from frappe.utils import now_datetime
+from frappe.utils import getdate, now_datetime, nowdate
 from frappe.utils import flt
 import frappe
 import json
 from frappe.model.workflow import apply_workflow
 from frappe.utils import now_datetime
+
+@frappe.whitelist()
+def get_customer_visit_stats(customer):
+    if not customer:
+        return {
+            "monthly_visits": 0,
+            "lifetime_visits": 0,
+            "type": "New"
+        }
+
+    from frappe.utils import getdate, nowdate
+
+    today = getdate(nowdate())
+    first_day = today.replace(day=1)
+
+    monthly_visits = frappe.db.count(
+        "Sales Invoice",
+        filters={
+            "customer": customer,
+            "docstatus": 1,
+            "outstanding_amount": 0,
+            "posting_date": ["between", [first_day, today]]
+        }
+    )
+
+    lifetime_visits = frappe.db.count(
+        "Sales Invoice",
+        filters={
+            "customer": customer,
+            "docstatus": 1,
+            "outstanding_amount": 0,
+            "status": 'Paid'
+        }
+    )
+
+    if lifetime_visits >= 50:
+        cust_type = "Platinum"
+    elif lifetime_visits >= 20:
+        cust_type = "VIP"
+    elif lifetime_visits >= 10:
+        cust_type = "Regular"
+    elif lifetime_visits >= 1:
+        cust_type = "Returning"
+    else:
+        cust_type = "New"
+
+    return {
+        "monthly_visits": monthly_visits,
+        "lifetime_visits": lifetime_visits,
+        "type": cust_type
+    }
+
+
 @frappe.whitelist()
 def get_payment_accounts(company, mode_of_payment):
     return {
@@ -24,14 +77,30 @@ def get_payment_accounts(company, mode_of_payment):
             "default_account"
         )
     }
+import frappe
+
+@frappe.whitelist(allow_guest=True)
+def create_customer(name):
+    if not name:
+        frappe.throw("Customer name is required")
+
+    # Check if customer exists
+    existing = frappe.get_all("Customer", filters={"customer_name": name}, limit_page_length=1)
+    if existing:
+        return existing[0].name  # return existing customer
+
+    # Create new customer
+    doc = frappe.get_doc({
+        "doctype": "Customer",
+        "customer_name": name
+    })
+    doc.insert(ignore_permissions=True)  # allow guest to insert
+    frappe.db.commit()
+    return doc.name
 
 @frappe.whitelist()
 def get_current_order_for_table(table):
-	order_name = frappe.db.get_value(
-		"Restaurant Table",
-		table,
-		"current_order"
-	)
+	order_name = frappe.db.get_value("Restaurant Table",table,"current_order")
 
 	if not order_name:
 		return None
@@ -44,13 +113,14 @@ def get_current_order_for_table(table):
 		"items": [
 			{
 				"item": row.item,
-				"qty": row.qty
+				"qty": row.qty,
+                "kitchen_note": row.kitchen_note
 			}
 			for row in order.items
 		]
 	}
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def create_order(table, customer=None, items=None, company=None, branch=None):
     if isinstance(items, str):
         items = json.loads(items)
@@ -98,6 +168,7 @@ def create_order(table, customer=None, items=None, company=None, branch=None):
         item_code = i.get("item")
         qty = int(i.get("qty", 1))
         sent = int(i.get("sent_qty", 0))
+        kitchen_note = i.get("kitchen_note")
         existing = None
         for row in order.items:
             if row.item == item_code:
@@ -110,6 +181,11 @@ def create_order(table, customer=None, items=None, company=None, branch=None):
             # existing.sent_qty += qty
             existing.is_new_item = 1
             existing.status = "Open"
+            if kitchen_note:
+                if existing.kitchen_note:
+                    existing.kitchen_note += f"\n{kitchen_note}"
+                else:
+                    existing.kitchen_note = kitchen_note
             order.workflow_state = "Open"
 
 
@@ -122,7 +198,8 @@ def create_order(table, customer=None, items=None, company=None, branch=None):
                 "qty": qty,
                 "last_batch_qty": qty,
                 "status": "Open",
-                "is_new_item": 1
+                "is_new_item": 1,
+                "kitchen_note": kitchen_note
             })
             order.workflow_state = "Open"
 
@@ -143,12 +220,12 @@ def create_order(table, customer=None, items=None, company=None, branch=None):
         "order": order.name,
         "reservation": reservation_id
     }
+
 @frappe.whitelist()
-def finalize_bill(table, discount=0, payment_mode="Cash", company=None):
+def finalize_bill(table, discount=0, extra_charge=0, payment_mode="Cash", company=None):
+
     try:
-        # ------------------------
-        # LOAD TABLE & ORDER
-        # ------------------------
+        from frappe.utils import flt, nowdate
         tab = frappe.get_doc("Restaurant Table", table)
         tab.reload()
 
@@ -160,135 +237,43 @@ def finalize_bill(table, discount=0, payment_mode="Cash", company=None):
         if not company:
             company = order.company or frappe.defaults.get_default("company")
 
-        # ------------------------
-        # AMOUNT CALCULATION
-        # ------------------------
-        subtotal = sum(flt(d.amount) for d in order.items)
         discount_pct = flt(discount)
-        discount_amount = (subtotal * discount_pct) / 100
-        final_amount = subtotal - discount_amount
-
-        company = order.company
+        extra_charge = flt(extra_charge)
         currency = frappe.db.get_value("Company", company, "default_currency")
+
         si = frappe.new_doc("Sales Invoice")
         si.company = company
         si.currency = currency
         si.customer = order.customer
         si.custom_reservation = order.current_reservation
         si.custom_restaurant_order = order.name
-        si.posting_date = frappe.utils.nowdate()
-        si.due_date = frappe.utils.nowdate()
+        si.posting_date = nowdate()
+        si.due_date = nowdate()
         si.update_stock = 0
-
         for item in order.items:
             si.append("items", {
                 "item_code": item.item,
                 "qty": item.qty,
-                "rate": item.rate,
-                "amount": item.amount
+                "rate": item.rate
             })
-
         if discount_pct:
+            si.apply_discount_on = "Net Total"
             si.additional_discount_percentage = discount_pct
-
-       
-        # total_advance = 0
-
-        # if order.current_reservation:
-        #     advances = frappe.get_all(
-        #         "Payment Entry",
-        #         filters={
-        #             "custom_reservation": order.current_reservation,
-        #             "docstatus": 1,
-        #             "payment_type": "Receive"
-        #         },
-        #         fields=["name", "unallocated_amount"]
-        #     )
-
-        #     for adv in advances:
-        #         if not adv.unallocated_amount or adv.unallocated_amount <= 0:
-        #             continue
-
-        #         remaining = final_amount - total_advance
-        #         if remaining <= 0:
-        #             break
-
-        #         allocate = min(adv.unallocated_amount, remaining)
-
-        #         si.append("advances", {
-        #             "reference_type": "Payment Entry",
-        #             "reference_name": adv.name,
-        #             # "difference_posting_date": adv.posting_date,
-        #             "advance_amount": adv.unallocated_amount,
-        #             "allocated_amount": allocate
-        #         })
-                
-        #         total_advance += allocate
-
+        if extra_charge > 0:
+            si.append("taxes", {
+                "charge_type": "Actual",
+                "account_head": frappe.db.get_value("Account",{"company":si.company,"account_type":"Chargeable"},"name"),
+                "description": "Extra Time Charge",
+                "tax_amount": extra_charge
+            })
+        si.calculate_taxes_and_totals()
         si.insert(ignore_permissions=True)
-        # si.reload()
-        # si.submit()
-        
-        # si.reload()  
 
-        # if si.outstanding_amount > 0:
-        #     mop_account = frappe.db.get_value(
-        #         "Mode of Payment Account",
-        #         {
-        #             "parent": payment_mode,
-        #             "company": si.company
-        #         },
-        #         "default_account"
-        #     )
+        frappe.db.set_value("Restaurant Order",order.name,"workflow_state","Closed")
+        frappe.db.set_value("Restaurant Table",table,{"status": "Free","current_order": ""})
 
-        #     if not mop_account:
-        #         frappe.throw("Mode of Payment account not found")
-
-        #     pe = frappe.new_doc("Payment Entry")
-        #     pe.payment_type = "Receive"
-        #     pe.company = si.company
-        #     pe.party_type = "Customer"
-        #     pe.party = si.customer
-        #     pe.posting_date = si.posting_date
-        #     pe.mode_of_payment = payment_mode
-        #     pe.custom_reservation = order.current_reservation
-
-        #     pe.paid_from = frappe.db.get_value(
-        #         "Company", si.company, "default_receivable_account"
-        #     )
-        #     pe.paid_to = mop_account
-
-        #     pe.paid_amount = si.outstanding_amount
-        #     pe.received_amount = si.outstanding_amount
-
-        #     pe.append("references", {
-        #         "reference_doctype": "Sales Invoice",
-        #         "reference_name": si.name,
-        #         "allocated_amount": si.outstanding_amount
-        #     })
-
-        #     pe.insert(ignore_permissions=True)
-        #     pe.submit()
-
-        # ------------------------
-        # CLOSE ORDER & FREE TABLE
-        # ------------------------
-        frappe.db.set_value(
-            "Restaurant Order",
-            order.name,
-            "workflow_state",
-            "Closed"
-        )
-
-        frappe.db.set_value(
-            "Restaurant Table",
-            table,
-            {
-                "status": "Free",
-                "current_order": ""
-            }
-        )
-        frappe.db.set_value("Reservation",si.custom_reservation,{"workflow_state": "Check-Out"})
+        if si.custom_reservation:
+            frappe.db.set_value("Reservation",si.custom_reservation,"workflow_state","Check-Out")
 
         return {
             "invoice_id": si.name,
@@ -300,6 +285,7 @@ def finalize_bill(table, discount=0, payment_mode="Cash", company=None):
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Finalize Bill Error")
         frappe.throw(str(e))
+
 
 @frappe.whitelist()
 def get_current_order(table):
@@ -321,7 +307,8 @@ def get_current_order(table):
                 "item": d.item,
                 "item_name": frappe.db.get_value("Item", d.item, "item_name"),
                 "qty": d.qty,
-                "rate": d.rate or 0
+                "rate": d.rate,
+                "kitchen_note": d.kitchen_note
             }
             for d in order.items
         ]

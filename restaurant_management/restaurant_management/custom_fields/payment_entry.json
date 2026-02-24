@@ -1,0 +1,13 @@
+{
+ "Payment Entry": [
+  {
+   "dt": "Payment Entry",
+   "fieldname": "custom_reservation",
+   "fieldtype": "Link",
+   "insert_after": "payment_order_status",
+   "label": "Reservation",
+   "module": "Restaurant Management",
+   "options": "Reservation"
+  }
+ ]
+}

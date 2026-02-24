@@ -38,13 +38,15 @@ frappe.pages['restaurant-pos'].on_page_load = function(wrapper) {
         .billing-summary { margin-top:15px; background:#f8f9fa; padding:12px; border-radius:8px; border: 1px dashed #ccc; }
         .grand-total { font-size:22px; font-weight:800; color:#2c3e50; border-top:2px solid #ddd; padding-top:8px; margin-top:8px; }
         .order-id-badge { background: #fff3cd; color: #856404; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 10px; display: block; border: 1px solid #ffeeba; }
-        .reservation-id-badge {  margin-top: -38px;margin-left: 156px; background: #fff3cd; color: #856404; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 10px; display: block; border: 1px solid #ffeeba; }
+        .reservation-id-badge {  margin-top: -38px;margin-left: 147px; background: #fff3cd; color: #856404; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 10px; display: block; border: 1px solid #ffeeba; }
         .btn-pay { background:#27ae60; color:#fff; padding:12px; border:none; border-radius:8px; font-weight:bold; cursor:pointer; width:100%; }
         .btn-kot { background:#2980b9; color:#fff; padding:12px; border:none; border-radius:8px; font-weight:bold; cursor:pointer; width:100%; }
         .payment-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; justify-content:center; align-items:center; z-index:9999; }
         .payment-content { background:#fff; padding:25px; border-radius:15px; width:400px; }
         
     </style>`).appendTo(page.body);
+ 
+
 
     /* ---------------- HTML ---------------- */
     $( `
@@ -64,13 +66,34 @@ frappe.pages['restaurant-pos'].on_page_load = function(wrapper) {
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div id="reservation-id-display"></div>
                 </div>
+                <div style="display:flex; gap:20px; align-items:center;">
+
+                <div>
+                    <div id="customer-field" style="min-width:250px;"></div>
+                    <div id="customer-visit-info"
+                         style="font-size:13px; margin-top:6px; font-weight:bold;">
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="order-area" style="margin-top:30px;">
+                <!-- Order items will render here -->
+            </div>
                 <hr>
                 <div id="order-items" style="min-height:200px; max-height:300px; overflow:auto;"></div>
                 <div class="billing-summary">
                     <div style="display:flex; justify-content:space-between;"><span>Sub-Total:</span><span id="sub-total">₹ 0.00</span></div>
                     <div style="display:flex; justify-content:space-between; margin-top:5px;"><span>Discount (%):</span><input type="number" id="discount-input" value="0" style="width:60px; text-align:center;"></div>
+                    <div style="display:flex; justify-content:space-between; margin-top:5px;">
+                    <span>Extra Time Charge:</span>
+                    <input type="number" id="extra-charge-input" value="0" 
+                    style="width:80px; text-align:center;">
+                    </div>
                     <div class="grand-total" style="display:flex; justify-content:space-between;"><span>Total:</span><span id="grand-total">₹ 0.00</span></div>
                 </div>
+                
+
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
                     <button class="btn-kot" id="kot-btn">SEND KOT</button>
                     <button class="btn-pay" id="checkout-btn">CHECKOUT</button>
@@ -102,6 +125,11 @@ frappe.pages['restaurant-pos'].on_page_load = function(wrapper) {
             placeholder: "Select Customer",
             onchange() {
                 selected_customer = customer_control.get_value();
+                if (!selected_customer) {
+                    $('#customer-visit-info').html("");
+                    return;
+                }
+                load_customer_visit_info(selected_customer);
             }
         },
         render_input: true
@@ -143,96 +171,148 @@ frappe.pages['restaurant-pos'].on_page_load = function(wrapper) {
     });
 }
 
+function load_customer_visit_info(customer) {
 
+    frappe.call({
+        method: "restaurant_management.restaurant_management.customization.api.table_board.get_customer_visit_stats",
+        args: { customer: customer },
+        callback: function(r) {
 
-    /* ---------------- FUNCTIONS ---------------- */
-    function render_order() {
-    let subtotal = 0;
-    $('#order-items').empty();
+            if (!r.message) return;
 
-    // Order ID
-    if (current_order_id) {
-        $('#order-id-display').html(
-            `<span class="order-id-badge">ID: ${current_order_id}</span>`
-        );
-    } else {
-        $('#order-id-display').empty();
-    }
+            let monthly = r.message.monthly_visits;
+            let lifetime = r.message.lifetime_visits;
+            let type = r.message.type;
 
-    // Reservation ID
-    if (reservation_id) {
-        $('#reservation-id-display').html(
-            `<span class="reservation-id-badge">ID: ${reservation_id}</span>`
-        );
-    } else {
-        $('#reservation-id-display').empty();
-    }
+            let color = "#27ae60";
 
-    let items = Object.values(order_items);
-    if (!items.length) {
-        $('#sub-total').text('');
-        $('#grand-total').text('');
-        return;
-    }
+            if (type === "Platinum") color = "#d4af37";
+            else if (type === "VIP") color = "#8e44ad";
+            else if (type === "Regular") color = "#2980b9";
+            else if (type === "Returning") color = "#f39c12";
+            else if (type === "New") color = "#e74c3c";
 
-    let promises = [];
-
-    items.forEach(i => {
-        let amt = i.qty * i.rate;
-        subtotal += amt;
-
-        let diff = i.qty - i.sent_qty;
-        let status =
-            (i.sent_qty > 0
-                ? `<span style="color:green;font-size:10px;">KOT:${i.sent_qty}</span> `
-                : '') +
-            (diff > 0
-                ? `<span style="color:orange;font-size:10px;">New:${diff}</span>`
-                : '');
-
-        let p = get_item_currency_symbol(i.item).then(symbol => {
-            $(`<div class="order-item">
-                <div style="flex:1;">
-                    <b>${i.item_name}</b><br>${status}
-                </div>
-                <div style="display:flex; align-items:center; gap:5px;">
-                    <button class="qty-btn" onclick="updateQty('${i.item}',-1)">-</button>
-                    <span>${i.qty}</span>
-                    <button class="qty-btn" onclick="updateQty('${i.item}',1)">+</button>
-                </div>
-                <div style="width:80px; text-align:right;">
-                    ${symbol} ${amt.toFixed(2)}
-                </div>
-            </div>`).appendTo('#order-items');
-        });
-
-        promises.push(p);
-    });
-
-    Promise.all(promises).then(() => {
-        let disc = parseFloat($('#discount-input').val()) || 0;
-        let total = subtotal - (subtotal * disc / 100);
-
-        // subtotal / total → FIRST item ka symbol use
-        let first_symbol = item_currency_map[items[0].item] || "";
-
-        $('#sub-total').text(
-            `${first_symbol} ${subtotal.toFixed(2)}`
-        );
-        $('#grand-total').text(
-            `${first_symbol} ${total.toFixed(2)}`
-        );
+            $('#customer-visit-info').html(
+                `<div style="color:${color}; line-height:1.6;">
+                    <div>Monthly Visits: ${monthly}</div>
+                    <div>Lifetime Visits: ${lifetime}</div>
+                    <div><b>${type} Customer</b></div>
+                </div>`
+            );
+        }
     });
 }
 
 
-    window.updateQty = (code, val) => {
-        let itm = order_items[code];
-        if (itm.qty + val < itm.sent_qty) return frappe.show_alert("KOT items can't be reduced", "orange");
-        itm.qty += val;
-        if (itm.qty <= 0) delete order_items[code];
-        render_order();
-    };
+
+    /* ---------------- FUNCTIONS ---------------- */
+    function render_order() {
+        let subtotal = 0;
+        $('#order-items').empty();
+
+        // Order ID
+        if (current_order_id) {
+            $('#order-id-display').html(
+                `<span class="order-id-badge">ID: ${current_order_id}</span>`
+            );
+        } else {
+            $('#order-id-display').empty();
+        }
+
+        // Reservation ID
+        if (reservation_id) {
+            $('#reservation-id-display').html(
+                `<span class="reservation-id-badge">ID: ${reservation_id}</span>`
+            );
+        } else {
+            $('#reservation-id-display').empty();
+        }
+
+        let items = Object.values(order_items);
+        if (!items.length) {
+            $('#sub-total').text('');
+            $('#grand-total').text('');
+            return;
+        }
+
+        let promises = [];
+
+        items.forEach(i => {
+            let amt = i.qty * i.rate;
+            subtotal += amt;
+
+            let diff = i.qty - i.sent_qty;
+            let status =
+                (i.sent_qty > 0
+                    ? `<span style="color:green;font-size:10px;">KOT:${i.sent_qty}</span> `
+                    : '') +
+                (diff > 0
+                    ? `<span style="color:orange;font-size:10px;">New:${diff}</span>`
+                    : '');
+
+            let p = get_item_currency_symbol(i.item).then(symbol => {
+                $(`<div class="order-item">
+                    <div style="flex:1;">
+                        <b>${i.item_name}</b><br>${status}
+
+                        <input type="text"
+                            placeholder="Kitchen note (Less spicy / Extra spicy)"
+                            value="${i.kitchen_note || ''}"
+                            style="width:95%; margin-top:4px; padding:4px; font-size:11px; border-radius:6px; border:1px solid #ddd;"
+                            oninput="updateKitchenNote('${i.item}', this.value)"
+                        />
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <button class="qty-btn" onclick="updateQty('${i.item}',-1)">-</button>
+                        <span>${i.qty}</span>
+                        <button class="qty-btn" onclick="updateQty('${i.item}',1)">+</button>
+                    </div>
+                    <div style="width:80px; text-align:right;">
+                        ${symbol} ${amt.toFixed(2)}
+                    </div>
+                </div>`).appendTo('#order-items');
+            });
+
+            promises.push(p);
+        });
+
+        Promise.all(promises).then(() => {
+            let disc = parseFloat($('#discount-input').val()) || 0;
+            let extra_charge = parseFloat($('#extra-charge-input').val()) || 0;
+
+            let discount_amount = subtotal * disc / 100;
+
+            let total = subtotal - discount_amount + extra_charge;
+
+
+            // subtotal / total → FIRST item ka symbol use
+            let first_symbol = item_currency_map[items[0].item] || "";
+
+            $('#sub-total').text(
+                `${first_symbol} ${subtotal.toFixed(2)}`
+            );
+            $('#grand-total').text(
+                `${first_symbol} ${total.toFixed(2)}`
+            );
+
+        });
+    }
+
+
+        window.updateQty = (code, val) => {
+            let itm = order_items[code];
+            if (itm.qty + val < itm.sent_qty) return frappe.show_alert("KOT items can't be reduced", "orange");
+            itm.qty += val;
+            if (itm.qty <= 0) delete order_items[code];
+            render_order();
+        };
+        window.updateKitchenNote = (code, note) => {
+            if (order_items[code]) {
+                order_items[code].kitchen_note = note;
+            }
+        };
+
     function set_currency_from_item_price(item_code) {
         // agar already set hai to dobara mat lao
         if (current_currency_symbol) return Promise.resolve();
@@ -260,7 +340,7 @@ frappe.pages['restaurant-pos'].on_page_load = function(wrapper) {
 
     function add_item(item) {
         if (!order_items[item.name]) {
-            order_items[item.name] = { item: item.name, item_name: item.item_name, qty: 1, sent_qty: 0, rate: item.standard_rate };
+            order_items[item.name] = { item: item.name, item_name: item.item_name, qty: 1, sent_qty: 0, rate: item.standard_rate,kitchen_note: "" };
         } else { order_items[item.name].qty += 1; }
         render_order();
     }
@@ -309,6 +389,7 @@ frappe.pages['restaurant-pos'].on_page_load = function(wrapper) {
 
                     if (selected_customer) {
                         customer_control.set_value(selected_customer);
+                        load_customer_visit_info(selected_customer);
                     }
                     // 🔥 ITEMS RESOLUTION
                     let items =
@@ -322,7 +403,8 @@ frappe.pages['restaurant-pos'].on_page_load = function(wrapper) {
                             item_name: i.item_name,
                             qty: i.qty,
                             sent_qty: i.qty,
-                            rate: i.rate
+                            rate: i.rate,
+                            kitchen_note: i.kitchen_note
                         };
                     });
                 }
@@ -360,7 +442,7 @@ frappe.pages['restaurant-pos'].on_page_load = function(wrapper) {
     /* ---------------- ACTIONS ---------------- */
     $('#kot-btn').on('click', () => {
         let send = [];
-        Object.values(order_items).forEach(i => { if (i.qty > i.sent_qty) send.push({item: i.item, qty: i.qty - i.sent_qty}); });
+        Object.values(order_items).forEach(i => { if (i.qty > i.sent_qty) send.push({item: i.item, qty: i.qty - i.sent_qty, kitchen_note: i.kitchen_note || ""}); });
         if (!send.length) return frappe.msgprint("No new items");
         frappe.call({
             method: "restaurant_management.restaurant_management.customization.api.table_board.create_order",
@@ -385,6 +467,7 @@ frappe.pages['restaurant-pos'].on_page_load = function(wrapper) {
             args: {
                 table: table_name,
                 discount: $('#discount-input').val(),
+                extra_charge: $('#extra-charge-input').val(),
                 payment_mode: $('#pay-mode').val(),
                 company: selected_company,
                 customer: selected_customer
@@ -425,37 +508,59 @@ frappe.pages['restaurant-pos'].on_page_load = function(wrapper) {
     $('#branch-filter').on('change', function () {
         selected_branch = $(this).val();
     });
-
-    // Load Categories (Groups)
     frappe.call({
         method: "frappe.client.get_list",
         args: {
             doctype: "Item",
-            fields: ["item_group"],
-            filters: { disabled: 0, custom_is_menu_item: 1 }
+            fields: ["custom_menu_category"],
+            filters: {
+                disabled: 0,
+                custom_is_menu_item: 1,
+                custom_menu_category: ["is", "set"]
+            },
+            limit_page_length: 0
         },
         callback: (r) => {
-            let unique_groups = [...new Set((r.message || []).map(row => row.item_group))];
-            unique_groups.forEach(group => {
-                $(`<div class="item-group">${group}</div>`)
-                    .appendTo('#group-list')
-                    .on('click', function () {
-                        $('.item-group').removeClass('active');
-                        $(this).addClass('active');
-                        load_items_by_group(group);
-                    });
+
+            let categories = [...new Set(
+                (r.message || [])
+                    .map(row => row.custom_menu_category)
+                    .filter(Boolean)
+            )];
+
+            $('#group-list').empty();
+
+            categories.forEach((cat, index) => {
+
+                let btn = $(`<div class="item-group ${index === 0 ? 'active' : ''}">
+                    ${cat}
+                </div>`);
+
+                btn.appendTo('#group-list');
+
+                btn.on('click', function () {
+                    $('.item-group').removeClass('active');
+                    $(this).addClass('active');
+                    load_items_by_group(cat);
+                });
+
+                // First category auto load
+                if (index === 0) {
+                    load_items_by_group(cat);
+                }
             });
         }
     });
 
-    function load_items_by_group(group) {
+
+    function load_items_by_group(category) {
         $('#item-list').empty();
         frappe.call({
             method: "frappe.client.get_list",
             args: {
                 doctype: "Item",
                 fields: ["name", "item_name", "standard_rate"],
-                filters: { item_group: group, disabled: 0, custom_is_menu_item: 1 }
+                filters: { custom_menu_category: category , disabled: 0, custom_is_menu_item: 1 }
             },
             callback: (res) => {
                 res.message.forEach(i => {
@@ -499,6 +604,6 @@ frappe.pages['restaurant-pos'].on_page_load = function(wrapper) {
     $('#checkout-btn').on('click', () => { if (Object.keys(order_items).length) $('#pay-modal').css('display', 'flex'); });
     $('#cancel-pay').on('click', () => $('#pay-modal').hide());
     $('#discount-input').on('input', render_order);
-
+    $('#extra-charge-input').off('input').on('input', render_order);
     load_existing_order();
 };

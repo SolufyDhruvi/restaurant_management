@@ -1,242 +1,3 @@
-// frappe.pages['restaurant-menu'].on_page_load = function(wrapper) {
-
-//     let page = frappe.ui.make_app_page({
-//         parent: wrapper,
-//         title: 'Restaurant Menu',
-//         single_column: true
-//     });
-
-//     // Add custom style
-//     let style = `
-//     <style>
-//         h4 {
-//             margin-top: 25px;
-//             color: #2c3e50;
-//             padding-left: 10px;
-//         }
-
-//         .menu-grid {
-//             display: grid;
-//             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-//             gap: 18px;
-//         }
-
-//         .menu-card {
-//             background: #ffffff;
-//             padding: 20px;
-//             border-radius: 16px;
-//             box-shadow: 0 6px 15px rgba(0,0,0,.05);
-//             text-align: center;
-//             transition: transform .3s, box-shadow .3s;
-//             cursor: pointer;
-//         }
-
-//         .menu-card:hover {
-//             transform: translateY(-5px);
-//             box-shadow: 0 12px 24px rgba(0,0,0,.12);
-//         }
-
-//         .menu-card b {
-//             font-size: 18px;
-//             color: #34495e;
-//         }
-
-//         .price {
-//             color: #1abc9c; /* teal */
-//             font-weight: bold;
-//             margin: 8px 0;
-//             font-size: 16px;
-//         }
-
-//         .badge {
-//             display: inline-block;
-//             padding: 2px 8px;
-//             border-radius: 12px;
-//             font-size: 12px;
-//             color: white;
-//             margin-bottom: 6px;
-//         }
-
-//         .Veg { background: #27ae60; }
-//         .Non\\ Veg { background: #e74c3c; }
-//         .Beverage { background: #3498db; }
-//     </style>`;
-
-//     page.main.html(`${style}<div id="menu"></div>`);
-
-//     load_menu();
-// };
-
-// // Helper to get table from URL ?table=T01
-// function get_table_number_from_url() {
-//     let params = new URLSearchParams(window.location.search);
-//     return params.get("table");
-// }
-// function load_menu(){
-//     let table_number = get_table_number_from_url();
-
-//     if (!table_number) {
-//         frappe.msgprint("Table not found. Please scan valid QR code.");
-//         return;
-//     }
-
-//     frappe.call({
-//         method:"restaurant_management.restaurant_management.customization.item.item.get_menu_items",
-//         callback:r => render_menu(r.message, table_number)
-//     });
-// }
-
-
-// function render_menu(menu, table_number){
-//     let html = "";
-
-//     ["Veg","Non Veg","Beverage"].forEach(section => {
-//         if(menu[section]?.length){
-//             html += `<h4>${section}</h4><div class="menu-grid">`;
-
-//             menu[section].forEach(item => {
-//                 html += `
-//                 <div class="menu-card"
-//                      onclick="open_create_order_dialog(
-//                             '${table_number}',
-//                             '${item.name}'
-//                         )"
-
-//                     <b>${item.item_name}</b>
-//                     <div class="price">₹ ${item.standard_rate}</div>
-//                 </div>`;
-//             });
-
-//             html += `</div>`;
-//         }
-//     });
-
-//     $("#menu").html(html);
-// }
-
-// // =================== ORDER DIALOG ===================
-
-// function open_create_order_dialog(table_number, clicked_item = null) {
-
-//     frappe.call({
-//         method: "restaurant_management.restaurant_management.customization.api.table_board.get_current_order_for_table",
-//         args: { table: table_number },
-//         callback: function (r) {
-
-//             let old_items = [];
-//             let customer = "";
-//             let new_items = [];
-
-//             if (r.message) {
-//                 old_items = r.message.items || [];
-//                 customer = r.message.customer || "";
-//             }
-
-//             // ✅ AUTO ADD CLICKED ITEM
-//             if (clicked_item) {
-//                 new_items.push({
-//                     item: clicked_item,
-//                     qty: 1
-//                 });
-//             }
-
-//             let dialog = new frappe.ui.Dialog({
-//                 title: "Restaurant Order",
-//                 size: "large",
-//                 fields: [
-
-//                     {
-//                         fieldtype: "Data",
-//                         fieldname: "table",
-//                         label: "Table",
-//                         default: table_number,
-//                         read_only: 1
-//                     },
-//                     {
-//                         fieldtype: "Link",
-//                         fieldname: "customer",
-//                         label: "Customer",
-//                         options: "Customer",
-//                         default: customer
-//                     },
-
-//                     { fieldtype: "Section Break", label: "Old Orders" },
-
-//                     {
-//                         fieldtype: "Table",
-//                         fieldname: "old_items",
-//                         read_only: 1,
-//                         data: old_items,
-//                         fields: [
-//                             {
-//                                 fieldtype: "Link",
-//                                 fieldname: "item",
-//                                 options: "Item",
-//                                 in_list_view: 1,
-//                                 read_only: 1
-//                             },
-//                             {
-//                                 fieldtype: "Int",
-//                                 fieldname: "qty",
-//                                 in_list_view: 1,
-//                                 read_only: 1
-//                             }
-//                         ]
-//                     },
-
-//                     { fieldtype: "Section Break", label: "Add New Items" },
-
-//                     {
-//                         fieldtype: "Table",
-//                         fieldname: "items",
-//                         reqd: 1,
-//                         data: new_items,   // 🔥 IMPORTANT
-//                         fields: [
-//                             {
-//                                 fieldtype: "Link",
-//                                 fieldname: "item",
-//                                 options: "Item",
-//                                 in_list_view: 1,
-//                                 reqd: 1
-//                             },
-//                             {
-//                                 fieldtype: "Int",
-//                                 fieldname: "qty",
-//                                 in_list_view: 1,
-//                                 default: 1
-//                             }
-//                         ]
-//                     }
-//                 ],
-
-//                 primary_action_label: "Place Order",
-//                 primary_action(values) {
-
-//                     if (!values.items || values.items.length === 0) {
-//                         frappe.msgprint("Please add new items");
-//                         return;
-//                     }
-
-//                     frappe.call({
-//                         method: "restaurant_management.restaurant_management.customization.api.table_board.create_order",
-//                         args: {
-//                             table: values.table,
-//                             customer: values.customer,
-//                             items: values.items
-//                         },
-//                         callback(r) {
-//                             frappe.msgprint(`Order ${r.message} Updated`);
-//                             dialog.hide();
-//                         }
-//                     });
-//                 }
-//             });
-
-//             dialog.show();
-//         }
-//     });
-// }
-
 frappe.pages['restaurant-menu'].on_page_load = function(wrapper) {
 
     let page = frappe.ui.make_app_page({
@@ -247,7 +8,6 @@ frappe.pages['restaurant-menu'].on_page_load = function(wrapper) {
 
     let style = `
     <style>
-        body { background: #f4f6f8; }
 
         h4 { margin: 25px 0 10px; }
 
@@ -342,11 +102,6 @@ let active_filter_type = "All"; // default filter
 
 function load_menu() {
     let table = get_table_number_from_url();
-
-    if (!table) {
-        frappe.msgprint("Invalid Table QR");
-        return;
-    }
 
     frappe.call({
         method: "restaurant_management.restaurant_management.customization.item.item.get_menu_items",
@@ -453,64 +208,167 @@ function render_menu_by_category(category, table, filterType="All") {
 }
 
 // ---------------- ORDER DIALOG ----------------
+
 function open_create_order_dialog(table, clicked_item = null) {
 
-    frappe.call({
-        method: "restaurant_management.restaurant_management.customization.api.table_board.get_current_order_for_table",
-        args: { table },
-        callback(r) {
+    let dialog;
 
-            let old_items = [];
-            let customer = "";
-            let new_items = [];
+    function fetch_current_order(selected_table) {
+        if (!selected_table) return;
 
-            if (r.message) {
-                old_items = r.message.items || [];
-                customer = r.message.customer || "";
+        frappe.call({
+            method: "restaurant_management.restaurant_management.customization.api.table_board.get_current_order_for_table",
+            args: { table: selected_table },
+            callback(r) {
+
+                if (r.message) {
+
+                    // Set customer
+                    dialog.set_value("customer", r.message.customer || "");
+
+                    // Set old items
+                    dialog.fields_dict.old_items.df.data = r.message.items || [];
+                    dialog.fields_dict.old_items.grid.refresh();
+
+                } else {
+
+                    // Clear if no order
+                    dialog.set_value("customer", "");
+                    dialog.fields_dict.old_items.df.data = [];
+                    dialog.fields_dict.old_items.grid.refresh();
+                }
             }
+        });
+    }
 
-            if (clicked_item) {
-                new_items.push({ item: clicked_item, qty: 1 });
-            }
+    let new_items = [];
+    if (clicked_item) {
+        new_items.push({ item: clicked_item, qty: 1 });
+    }
 
-            let dialog = new frappe.ui.Dialog({
-                title: "Restaurant Order",
-                size: "large",
+    dialog = new frappe.ui.Dialog({
+        title: "Restaurant Order",
+        size: "large",
+        fields: [
+
+            {
+                fieldtype: "Link",
+                fieldname: "table",
+                label: "Table",
+                default: table,
+                options: "Restaurant Table",
+                reqd: 1,
+                onchange: function () {
+                    let selected_table = dialog.get_value("table");
+                    fetch_current_order(selected_table);
+                }
+            },
+
+            {
+                fieldtype: "Link",
+                fieldname: "customer",
+                label: "Customer",
+                options: "Customer"
+            },
+
+            { fieldtype: "Section Break", label: "Old Orders" },
+
+            {
+                fieldtype: "Table",
+                fieldname: "old_items",
+                read_only: 1,
                 fields: [
-                    { fieldtype: "Data", fieldname: "table", label: "Table", default: table, read_only: 1 },
-                    { fieldtype: "Link", fieldname: "customer", label: "Customer", options: "Customer", default: customer },
-
-                    { fieldtype: "Section Break", label: "Old Orders" },
-                    { fieldtype: "Table", fieldname: "old_items", data: old_items, read_only: 1, fields:[
-                        { fieldtype: "Link", fieldname: "item", options: "Item", in_list_view: 1 },
-                        { fieldtype: "Int", fieldname: "qty", in_list_view: 1 }
-                    ]},
-
-                    { fieldtype: "Section Break", label: "Add New Items" },
-                    { fieldtype: "Table", fieldname: "items", data: new_items, reqd: 1, fields:[
-                        { fieldtype: "Link", fieldname: "item", options: "Item", in_list_view: 1, reqd: 1 },
-                        { fieldtype: "Int", fieldname: "qty", default: 1, in_list_view: 1 }
-                    ]}
-                ],
-
-                primary_action_label: "Place Order",
-                primary_action(values) {
-                    if (!values.items || values.items.length === 0) {
-                        frappe.msgprint("Please add items");
-                        return;
+                    {
+                        label: "Item",
+                        fieldtype: "Link",
+                        fieldname: "item",
+                        options: "Item",
+                        in_list_view: 1
+                    },
+                    {
+                        label: "Qty",
+                        fieldtype: "Int",
+                        fieldname: "qty",
+                        in_list_view: 1
+                    },
+                    {
+                        label: "Kitchen Note",
+                        fieldtype: "Small Text",
+                        fieldname: "kitchen_note",
+                        in_list_view: 1
                     }
-                    frappe.call({
-                        method: "restaurant_management.restaurant_management.customization.api.table_board.create_order",
-                        args: { table: values.table, customer: values.customer, items: values.items },
-                        callback(r) {
-                            frappe.msgprint(`Order ${r.message} Updated`);
-                            dialog.hide();
+                ]
+            },
+
+            { fieldtype: "Section Break", label: "Add New Items" },
+
+            {
+                fieldtype: "Table",
+                fieldname: "items",
+                data: new_items,
+                reqd: 1,
+                fields: [
+                    {
+                        label: "Item",
+                        fieldtype: "Link",
+                        fieldname: "item",
+                        options: "Item",
+                        in_list_view: 1,
+                        reqd: 1
+                    },
+                    {
+                        label: "Qty",
+                        fieldtype: "Int",
+                        fieldname: "qty",
+                        default: 1,
+                        in_list_view: 1
+                    },
+                    {
+                        label: "Kitchen Note",
+                        fieldtype: "Small Text",
+                        fieldname: "kitchen_note",
+                        in_list_view: 1
+                    }
+                ]
+            }
+        ],
+
+        primary_action_label: "Place Order",
+
+        primary_action(values) {
+
+            if (!values.items || values.items.length === 0) {
+                frappe.msgprint("Please add items");
+                return;
+            }
+
+            frappe.call({
+                method: "restaurant_management.restaurant_management.customization.api.table_board.create_order",
+                args: {
+                    table: values.table,
+                    customer: values.customer,
+                    items: values.items
+                },
+                callback(r) {
+
+                    if (r.message) {
+                        let order_name;
+                        if (typeof r.message === "object") {
+                            order_name = JSON.stringify(r.message);
+                        } else {
+                            order_name = r.message;
                         }
-                    });
+                        frappe.msgprint(`Order ${order_name} Updated`);
+                        dialog.hide();
+                    }
                 }
             });
-
-            dialog.show();
         }
     });
+
+    dialog.show();
+
+    // Load current order when dialog opens
+    fetch_current_order(table);
 }
+

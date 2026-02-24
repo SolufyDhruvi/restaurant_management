@@ -96,7 +96,8 @@ def get_kitchen_orders():
                     "item": d.item,
                     "item_name": frappe.db.get_value("Item", d.item, "item_name"),
                     "qty": d.last_batch_qty,
-                    "status": d.status
+                    "status": d.status,
+                    "kitchen_note": d.kitchen_note
                 })
 
     return result

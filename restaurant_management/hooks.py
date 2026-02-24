@@ -141,6 +141,9 @@ after_migrate = "restaurant_management.migrate.after_migrate"
 doc_events = {
 	"Sales Invoice": {
 		"on_update": "restaurant_management.restaurant_management.customization.sales_invoice.sales_invoice.fetch_name_sales_invoice",
+	},
+    "Payment Entry": {
+        "on_submit": "restaurant_management.restaurant_management.customization.payment.payment.update_reservation_on_payment"
 	}
 }
 

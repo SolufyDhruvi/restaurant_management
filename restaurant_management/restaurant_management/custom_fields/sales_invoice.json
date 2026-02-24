@@ -1,0 +1,81 @@
+{
+ "Sales Invoice": [
+  {
+   "dt": "Sales Invoice",
+   "fieldname": "permit_no",
+   "fieldtype": "Data",
+   "insert_after": "vat_section",
+   "is_system_generated": 1,
+   "label": "Permit Number",
+   "module": "Restaurant Management"
+  },
+  {
+   "dt": "Sales Invoice",
+   "fieldname": "vat_section",
+   "fieldtype": "Section Break",
+   "insert_after": "language",
+   "is_system_generated": 1,
+   "label": "VAT Details",
+   "module": "Restaurant Management"
+  },
+  {
+   "default": "0",
+   "dt": "Sales Invoice",
+   "fieldname": "tourist_tax_return",
+   "fieldtype": "Currency",
+   "insert_after": "vat_emirate",
+   "is_system_generated": 1,
+   "label": "Tax Refund provided to Tourists (AED)",
+   "module": "Restaurant Management"
+  },
+  {
+   "dt": "Sales Invoice",
+   "fetch_from": "company_address.emirate",
+   "fieldname": "vat_emirate",
+   "fieldtype": "Select",
+   "insert_after": "permit_no",
+   "is_system_generated": 1,
+   "label": "VAT Emirate",
+   "module": "Restaurant Management",
+   "options": "\nAbu Dhabi\nAjman\nDubai\nFujairah\nRas Al Khaimah\nSharjah\nUmm Al Quwain"
+  },
+  {
+   "dt": "Sales Invoice",
+   "fetch_from": "customer.customer_name_in_arabic",
+   "fieldname": "customer_name_in_arabic",
+   "fieldtype": "Read Only",
+   "insert_after": "customer_name",
+   "is_system_generated": 1,
+   "label": "Customer Name in Arabic",
+   "module": "Restaurant Management"
+  },
+  {
+   "dt": "Sales Invoice",
+   "fetch_from": "company.tax_id",
+   "fieldname": "company_trn",
+   "fieldtype": "Read Only",
+   "insert_after": "company_address",
+   "is_system_generated": 1,
+   "label": "Company TRN",
+   "module": "Restaurant Management"
+  },
+  {
+   "dt": "Sales Invoice",
+   "fieldname": "custom_reservation",
+   "fieldtype": "Link",
+   "insert_after": "custom_restaurant_order",
+   "label": "Reservation",
+   "module": "Restaurant Management",
+   "options": "Reservation"
+  },
+  {
+   "dt": "Sales Invoice",
+   "fieldname": "custom_restaurant_order",
+   "fieldtype": "Link",
+   "insert_after": "due_date",
+   "label": "Restaurant Order",
+   "module": "Restaurant Management",
+   "options": "Restaurant Order"
+  }
+ ]
+}
